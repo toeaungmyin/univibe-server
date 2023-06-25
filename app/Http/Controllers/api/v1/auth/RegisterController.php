@@ -3,14 +3,11 @@
 namespace App\Http\Controllers\api\v1\auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\RegisterRequest;
-use App\Mail\VertifyEmail;
+use App\Http\Requests\auth\RegisterRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Mail;
-use Nette\Utils\Random;
 
 class RegisterController extends Controller
 {
@@ -25,18 +22,18 @@ class RegisterController extends Controller
             'birthday' => Carbon::parse($request->birthday),
         ]);
 
-        $user->SendVertifyEmail();
+        $user->sendVertifyEmail();
 
         return response()->json([
             'status' => true,
-            'data' => $user->id,
+            'data' => ['user_id' => $user->id],
             'message' => 'Vertify email was sent'
         ]);
     }
 
-    public function reSendVertifyEmail(User $user)
+    public function reSendVerifyEmail(User $user)
     {
-        $user->SendVertifyEmail();
+        $user->sendVertifyEmail();
 
         return response()->json([
             'status' => true,
@@ -44,7 +41,7 @@ class RegisterController extends Controller
         ]);
     }
 
-    public function vertifyEmail(Request $request)
+    public function verifyEmail(Request $request)
     {
         if ($request->code === null || $request->code === '') {
             return response()->json([

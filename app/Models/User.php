@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
+use App\Mail\PasswordResetEmail;
 use App\Mail\VertifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -52,7 +53,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function SendVertifyEmail()
+    public function sendVertifyEmail()
     {
         try {
             $code = Random::generate(6, '0-9');
@@ -70,6 +71,31 @@ class User extends Authenticatable
                 'status' => false,
                 'message' => $th->__toString()
             ]);
+        }
+    }
+
+    public function sendPasswordResetEmail()
+    {
+        try {
+            $code = Random::generate(6, '0-9');
+
+            PasswordReset::create([
+                'email' => $this->email,
+                'code' => $code,
+            ]);
+
+            Mail::to($this->email)->send(new PasswordResetEmail($this, $code));
+
+            return [
+                'status' => true,
+                'message' => 'Recovery email was sent'
+            ];
+        } catch (\Throwable $th) {
+
+            return [
+                'status' => false,
+                'message' => $th->__toString()
+            ];
         }
     }
 }
