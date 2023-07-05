@@ -22,7 +22,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('/v1/login', [LoginController::class, 'login']);
+Route::post('/v1/sign-in', [LoginController::class, 'login']);
 Route::post('/v1/sign-up', [RegisterController::class, 'store']);
 Route::post('/v1/users/verify', [RegisterController::class, 'verifyEmail']);
 Route::post('/v1/users/{user}/verify/re-send', [RegisterController::class, 'reSendVerifyEmail']);

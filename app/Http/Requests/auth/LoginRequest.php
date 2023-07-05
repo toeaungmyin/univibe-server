@@ -38,7 +38,7 @@ class LoginRequest extends FormRequest
                 // requires at least one uppercase letter
                 // requires at least one special character from the specified symbols
                 // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
-            ]
+            ],
         ];
     }
 }

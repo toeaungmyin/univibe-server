@@ -20,7 +20,7 @@ class LoginController extends Controller
                     $token = $user->createToken($user->email . '_' . now())->accessToken;
                     return response()->json([
                         'token' =>  $token,
-                        'data' => $user,
+                        'user' => $user,
                         'message' => ['Login successful']
                     ], 200);
                 } else {
