@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1\admin\auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\auth\LoginRequest;
+use App\Http\Requests\admin\auth\LoginRequest;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,7 +12,7 @@ class LoginController extends Controller
     public function login(LoginRequest $request)
     {
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->email)->role('admin')->first();
 
         if ($user) {
             if (Hash::check($request->password, $user->password)) {
@@ -27,10 +27,12 @@ class LoginController extends Controller
                     return response()->json($response, 422);
                 }
             } else {
+
                 $response = ["message" => ["Invalid email or password"]];
                 return response()->json($response, 422);
             }
         } else {
+
             $response = ["message" => ['Invalid email or password']];
             return response()->json($response, 422);
         }
