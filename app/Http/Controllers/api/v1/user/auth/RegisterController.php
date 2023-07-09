@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\v1\auth;
+namespace App\Http\Controllers\api\v1\user\auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\RegisterRequest;
@@ -19,24 +19,37 @@ class RegisterController extends Controller
             'username' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'birthday' => Carbon::parse($request->birthday),
-        ]);
+            'birthday' => $request->birthday,
+        ])->assignRole('user');
 
         $user->sendVertifyEmail();
 
         return response()->json([
             'status' => true,
-            'data' => ['user_id' => $user->id],
+            'data' => [
+                'user_id' => $user->id,
+                'code_expire_time' => $this->CODE_EXPIRE_TIME
+            ],
             'message' => 'Vertify email was sent'
         ]);
     }
 
-    public function reSendVerifyEmail(User $user)
+    public function reSendVerifyEmail(Request $request)
     {
+        $user = User::find($request->user_id);
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'user not found'
+            ]);
+        }
         $user->sendVertifyEmail();
 
         return response()->json([
             'status' => true,
+            'data' => [
+                'code_expire_time' => $this->CODE_EXPIRE_TIME
+            ],
             'message' => 'Vertify email was sent'
         ]);
     }
@@ -74,7 +87,6 @@ class RegisterController extends Controller
             return response()->json([
                 'status' => true,
                 'token' =>  $token,
-                'user' => $user,
                 'message' => 'Your email is verified successfully'
             ], 200);
         }

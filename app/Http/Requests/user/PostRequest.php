@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Http\Requests\auth;
+namespace App\Http\Requests\user;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
-class ForgetPasswordRequest extends FormRequest
+class PostRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
-    //  */
-    // public function authorize()
-    // {
-    //     return false;
-    // }
+     */
+    public function authorize()
+    {
+        return Auth::check();
+    }
 
     /**
      * Get the validation rules that apply to the request.
@@ -24,12 +25,8 @@ class ForgetPasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => [
-                'required',
-                'email',
-                'exists:users,email',
-                'ends_with:@ucsm.edu.mm'
-            ],
+            'body' => 'nullable|string|max:255',
+            'photo' => 'nullable|image|size:1MB'
         ];
     }
 }

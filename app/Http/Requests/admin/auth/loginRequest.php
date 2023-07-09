@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests\auth;
+namespace App\Http\Requests\admin\auth;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class RegisterRequest extends FormRequest
+class loginRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -13,7 +13,7 @@ class RegisterRequest extends FormRequest
      */
     // public function authorize()
     // {
-    //     return true;
+    //     return false;
     // }
 
     /**
@@ -24,15 +24,10 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'username' => [
-                'required',
-                'unique:users,username',
-            ],
             'email' => [
                 'required',
                 'email',
-                'unique:users,email',
-                'ends_with:@ucsm.edu.mm'
+                'exists:users,email',
             ],
             'password' => [
                 'required',
@@ -42,7 +37,7 @@ class RegisterRequest extends FormRequest
                 // requires at least one uppercase letter
                 // requires at least one special character from the specified symbols
                 // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
-            ]
+            ],
         ];
     }
 }

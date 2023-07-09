@@ -1,21 +1,20 @@
 <?php
 
-namespace App\Http\Requests\auth;
+namespace App\Http\Requests\user\auth;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Support\Facades\Auth;
 
-class PasswordResetRequest extends FormRequest
+class RegisterRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
      *
      * @return bool
      */
-    public function authorize()
-    {
-        return Auth::check();
-    }
+    // public function authorize()
+    // {
+    //     return true;
+    // }
 
     /**
      * Get the validation rules that apply to the request.
@@ -25,6 +24,16 @@ class PasswordResetRequest extends FormRequest
     public function rules()
     {
         return [
+            'username' => [
+                'required',
+                'unique:users,username',
+            ],
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'ends_with:@ucsm.edu.mm'
+            ],
             'password' => [
                 'required',
                 'min:8',

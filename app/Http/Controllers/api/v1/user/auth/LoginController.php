@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\api\v1\auth;
+namespace App\Http\Controllers\api\v1\user\auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\auth\LoginRequest;
@@ -20,7 +20,6 @@ class LoginController extends Controller
                     $token = $user->createToken($user->email . '_' . now())->accessToken;
                     return response()->json([
                         'token' =>  $token,
-                        'user' => $user,
                         'message' => ['Login successful']
                     ], 200);
                 } else {
