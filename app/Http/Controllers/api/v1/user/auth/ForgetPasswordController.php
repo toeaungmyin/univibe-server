@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1\user\auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\user\auth\ForgetPasswordRequest;
+use App\Http\Requests\User\Auth\ForgetPasswordRequest;
 use App\Models\PasswordReset;
 use App\Models\User;
 use Carbon\Carbon;
