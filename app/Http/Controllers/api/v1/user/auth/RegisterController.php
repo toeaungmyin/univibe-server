@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\api\v1\user\auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\auth\RegisterRequest;
+use App\Http\Requests\user\auth\RegisterRequest;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
