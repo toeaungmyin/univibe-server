@@ -25,20 +25,20 @@ class LoginRequest extends FormRequest
     {
         return
             [
-            'email' => [
-                'required',
-                'email',
-                'exists:users,email',
-            ],
-            'password' => [
-                'required',
-                // 'min:8',
-                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
-                // requires at least one lowercase letter
-                // requires at least one uppercase letter
-                // requires at least one special character from the specified symbols
-                // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
-            ],
-        ];
+                'email' => [
+                    'required',
+                    'email',
+                    // 'exists:users,email',
+                ],
+                'password' => [
+                    'required',
+                    // 'min:8',
+                    // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
+                    // requires at least one lowercase letter
+                    // requires at least one uppercase letter
+                    // requires at least one special character from the specified symbols
+                    // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
+                ],
+            ];
     }
 }
