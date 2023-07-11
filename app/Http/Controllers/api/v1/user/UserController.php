@@ -13,4 +13,8 @@ class UserController extends Controller
     {
         return response()->json(new UserResource(Auth::user()));
     }
+
+    public function index()
+    {
+    }
 }

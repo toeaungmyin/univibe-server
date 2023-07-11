@@ -59,6 +59,8 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
 Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(function () {
     Route::get('/users/profile', [AdminUserController::class, 'profile']);
 
+    Route::get('/users', [AdminUserController::class, 'index']);
+
     Route::get('/posts', [AdminPostController::class, 'index']);
     Route::delete('/posts/{post}', [AdminPostController::class, 'delete']);
 });

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\admin;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
@@ -18,7 +19,9 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'username' => $this->username,
             'email' => $this->email,
-            'birthday' => $this->birthday,
+            'birthday' => Carbon::parse($this->birthday)->format('F j,Y'),
+            'online' => $this->online,
+            'profile_url' => $this->profile_url,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'roles' => $this->getRolenames(),

@@ -55,7 +55,6 @@ class ForgetPasswordController extends Controller
                 'code_verified' => true,
                 'code' => ''
             ]);
-
             $user = User::where('email', $password_reset->email)->first();
 
             if ($user) {

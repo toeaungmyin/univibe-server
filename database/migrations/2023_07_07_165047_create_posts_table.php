@@ -19,6 +19,7 @@ return new class extends Migration
             $table->text('body');
             $table->string('photo_url');
             $table->timestamps();
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
