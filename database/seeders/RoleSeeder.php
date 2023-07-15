@@ -20,7 +20,7 @@ class RoleSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Create roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $userRole = Role::create(['name' => 'user']);
+        $adminRole = Role::create(['name' => 'admin', 'guard_name' => 'api']);
+        $userRole = Role::create(['name' => 'user', 'guard_name' => 'api']);
     }
 }

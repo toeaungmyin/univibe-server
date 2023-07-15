@@ -47,7 +47,7 @@
 		<p>Dear {{ $user->username }},</p>
 		<p>Thank you for signing up.<br />To complete your registration, please verify your email address by entering the
 			verification code below:</p>
-		<div class="verification-code">{{ $user->email_verification_code }}</div>
+		<div class="verification-code">{{ $code }}</div>
 		<p>If you didn't sign up for this service, you can safely ignore this email.</p>
 		<p>Thank you,</p>
 		<p>The Team, UniVibe</p>

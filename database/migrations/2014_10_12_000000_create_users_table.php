@@ -17,12 +17,11 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('email')->unique();
-            $table->timestamp('birthday');
+            $table->date('birthday');
             $table->string('profile_url')->nullable();
             $table->boolean('online')->default(false);
             $table->boolean('email_verified')->default(false);
-            $table->timestamp('email_verified_at')->nullable();
-            $table->string('email_verification_code')->nullable();
+            $table->dateTime('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();

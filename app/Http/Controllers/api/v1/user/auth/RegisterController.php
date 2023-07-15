@@ -5,13 +5,13 @@ namespace App\Http\Controllers\api\v1\user\auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Auth\RegisterRequest;
 use App\Models\User;
+use App\Models\Verification_Code;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class RegisterController extends Controller
 {
-
     private $CODE_EXPIRE_TIME = 120;
     public function store(RegisterRequest $request)
     {
@@ -42,7 +42,8 @@ class RegisterController extends Controller
                 'status' => false,
                 'message' => 'user not found'
             ]);
-        }
+        };
+
         $user->sendVertifyEmail();
 
         return response()->json([
@@ -62,8 +63,8 @@ class RegisterController extends Controller
                 'message' => 'Invalid login attempt'
             ], 401);
         }
-
-        $user = User::where('email_verification_code', $request->code)->first();
+        $code = Verification_Code::where('code', $request->code)->first();
+        $user = User::find($code->user_id);
 
         if ($user == null) {
             return response()->json([
@@ -72,16 +73,16 @@ class RegisterController extends Controller
             ], 401);
         }
 
-        $creationTime = Carbon::parse($user->updated_at);
+        $creationTime = Carbon::parse($code->created_at);
         $currentTime = Carbon::now();
 
         if ($currentTime->diffInSeconds($creationTime) < $this->CODE_EXPIRE_TIME) {
             $user->update([
                 'email_verified' => 1,
                 'email_verified_at' => $currentTime,
-                'email_verification_code' => ''
             ]);
-
+            $user->assignRole('user');
+            $code->delete();
             $token = $user->createToken($user->email . '_' . now())->accessToken;
 
             return response()->json([
@@ -90,10 +91,6 @@ class RegisterController extends Controller
                 'message' => 'Your email is verified successfully'
             ], 200);
         }
-
-        $user->update([
-            'email_verification_code' => ''
-        ]);
 
         return response()->json([
             'status' => false,

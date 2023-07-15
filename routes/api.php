@@ -48,6 +48,7 @@ Route::post('/v1/admin/password/reset', [AdminForgetPasswordController::class, '
 // user routes
 Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/users/profile', [UserController::class, 'profile']);
+    Route::get('/users', [UserController::class, 'index']);
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts/{post}', [PostController::class, 'store']);

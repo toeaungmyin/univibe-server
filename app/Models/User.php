@@ -14,6 +14,7 @@ use Laravel\Passport\HasApiTokens;
 use Nette\Utils\Random;
 use Spatie\Permission\Traits\HasRoles;
 
+
 class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
@@ -28,9 +29,10 @@ class User extends Authenticatable
         'email',
         'password',
         'birthday',
+        'profile_url',
+        'online',
         'email_verified',
         'email_verified_at',
-        'email_verification_code'
     ];
 
     /**
@@ -52,21 +54,38 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+    public $guard_name = 'api';
 
+    /*
+     * Custom methods
+     */
+
+    //  email verification
     public function sendVertifyEmail()
     {
         try {
-            $code = Random::generate(6, '0-9');
+            if ($this->verification_code) {
+                $verificationCode = Verification_Code::where('user_id', $this->id)->first();
 
-            $this->update([
-                'email_verification_code' => $code
+                if ($verificationCode) {
+                    $verificationCode->delete();
+                }
+            }
+
+            $exist_codes = Verification_Code::pluck('code')->all();
+
+            do {
+                $code = Random::generate(6, '0-9');
+            } while (in_array($code, $exist_codes));
+
+            Verification_Code::create([
+                'user_id' => $this->id,
+                'code' => $code
             ]);
 
-            Mail::to($this->email)->send(new VertifyEmail($this));
-
-            return $code;
+            Mail::to($this->email)->send(new VertifyEmail($this, $code));
         } catch (\Throwable $th) {
-            $this->delete();
+
             return response()->json([
                 'status' => false,
                 'message' => $th->__toString()
@@ -99,8 +118,44 @@ class User extends Authenticatable
         }
     }
 
-    public function post()
+    /*
+     * Relationship
+     */
+
+    // Friendship
+    public function followers()
+    {
+        return $this->hasMany(Following::class, 'following_id');
+    }
+
+    public function followings()
+    {
+        return $this->hasMany(Following::class, 'follower_id');
+    }
+
+    public function friends()
+    {
+        return $this->hasManyThrough(
+            User::class,
+            Following::class,
+            'follower_id',
+            'id',
+            'id',
+            'following_id'
+        )->whereHas('followers', function ($query) {
+            $query->where('following_id', $this->id);
+        });
+    }
+
+    // post
+    public function posts()
     {
         return $this->belongsToMany(Post::class);
+    }
+
+    // verification code
+    public function verification_codes()
+    {
+        return $this->hasMany(Verification_Code::class);
     }
 }
