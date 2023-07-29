@@ -16,7 +16,8 @@ return new class extends Migration
     // "Followers" are the users who follow you.
     public function up()
     {
-        Schema::create('following', function (Blueprint $table) {
+        Schema::create('followings', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('follower_id');
             $table->unsignedBigInteger('following_id');
             $table->foreign('follower_id')->references('id')->on('users')->onDelete('cascade');

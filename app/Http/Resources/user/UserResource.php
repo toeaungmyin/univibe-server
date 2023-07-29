@@ -22,12 +22,13 @@ class UserResource extends JsonResource
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
             'profile_url' => $this->profile_url,
             'online' => $this->online,
-            'followers' => $this->followers(),
-            'following' => $this->followings(),
+            'followers' => $this->followers,
+            'following' => $this->followings,
+            'friends' => $this->friends,
             'roles' => $this->getRolenames(),
             'permissions' => $this->getPermissionNames(),
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),
+            'updated_at' => Carbon::parse($this->updated_at)->format('Y-m-d'),
         ];
     }
 }

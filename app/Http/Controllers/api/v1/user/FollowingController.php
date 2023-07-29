@@ -3,29 +3,45 @@
 namespace App\Http\Controllers\api\v1\user;
 
 use App\Http\Controllers\Controller;
-use App\Models\Following;
+use Illuminate\Support\Facades\Validator;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class FollowingController extends Controller
 {
-    public function follow(Request $request)
+
+
+    public function store(Request $request)
     {
-        if (!$request->following_id) {
+        $validator = Validator::make($request->all(), [
+            'following_id' => 'required'
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
-                'status' => true,
-                'message' => 'following_id is required'
-            ]);
+                'status' => false,
+                'errors' => $validator->errors()
+            ], 422);
         }
 
-        Following::create([
-            'follower_id' => $request->user()->id,
-            'following_id' => $request->following_id
-        ]);
+        $follower = $request->user();
+        $followingId = $request->input('following_id');
+        $followingUser = User::find($followingId);
+
+        if (!$followingUser) {
+            return response()->json([
+                'status' => false,
+                'message' => 'User with ID ' . $followingId . ' not found'
+            ], 404);
+        }
+
+        $follower->followings()->attach($followingId);
 
         return response()->json([
             'status' => true,
-            'message' => 'You followed ' . User::find($request->following_id)->username
-        ]);
+            'message' => 'You followed ' . $followingUser->username
+        ], 200);
     }
+
+
 }

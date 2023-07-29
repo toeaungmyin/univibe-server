@@ -135,17 +135,13 @@ class User extends Authenticatable
 
     public function friends()
     {
-        return $this->hasManyThrough(
-            User::class,
-            Following::class,
-            'follower_id',
-            'id',
-            'id',
-            'following_id'
-        )->whereHas('followers', function ($query) {
+        return $this->belongsToMany(User::class, 'followings', 'follower_id', 'following_id')
+        ->whereHas('followings', function ($query) {
             $query->where('following_id', $this->id);
         });
     }
+
+
 
     // post
     public function posts()

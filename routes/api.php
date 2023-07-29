@@ -11,7 +11,7 @@ use App\Http\Controllers\api\v1\user\auth\RegisterController;
 use App\Http\Controllers\api\v1\user\auth\LoginController;
 use App\Http\Controllers\api\v1\user\auth\LogoutController;
 use App\Http\Controllers\api\v1\user\auth\ForgetPasswordController;
-
+use App\Http\Controllers\api\v1\user\FollowingController;
 use App\Http\Controllers\api\v1\user\PostController;
 use App\Http\Controllers\api\v1\user\UserController;
 use Illuminate\Http\Request;
@@ -47,20 +47,27 @@ Route::post('/v1/admin/password/reset', [AdminForgetPasswordController::class, '
 
 // user routes
 Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
-    Route::get('/users/profile', [UserController::class, 'profile']);
+    Route::get('/me', [UserController::class, 'profile']);
     Route::get('/users', [UserController::class, 'index']);
+
+    // Route::put('/users/{user}', [UserController::class, 'update']);
+    Route::post('/users/{user}/followings/{following}', [FollowingController::class, 'store']);
+
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts/{post}', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'delete']);
+
 });
 
 // admin routes
 Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(function () {
-    Route::get('/users/profile', [AdminUserController::class, 'profile']);
+    Route::get('/me', [AdminUserController::class, 'profile']);
 
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
     Route::get('/users', [AdminUserController::class, 'index']);
+
 
     Route::get('/posts', [AdminPostController::class, 'index']);
     Route::delete('/posts/{post}', [AdminPostController::class, 'delete']);
