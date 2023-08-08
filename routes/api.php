@@ -49,13 +49,14 @@ Route::post('/v1/admin/password/reset', [AdminForgetPasswordController::class, '
 Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/me', [UserController::class, 'profile']);
     Route::get('/users', [UserController::class, 'index']);
+    Route::get('/users/{user}', [UserController::class, 'show']);
+    Route::put('/users/update', [UserController::class, 'update']);
 
-    // Route::put('/users/{user}', [UserController::class, 'update']);
     Route::post('/users/{user}/followings/{following}', [FollowingController::class, 'store']);
 
 
     Route::get('/posts', [PostController::class, 'index']);
-    Route::post('/posts/{post}', [PostController::class, 'store']);
+    Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'delete']);
 
@@ -65,8 +66,15 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
 Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(function () {
     Route::get('/me', [AdminUserController::class, 'profile']);
 
-    Route::put('/users/{user}', [AdminUserController::class, 'update']);
     Route::get('/users', [AdminUserController::class, 'index']);
+    Route::get('/users/{user}', [AdminUserController::class, 'show']);
+    Route::put('/users/{user}', [AdminUserController::class, 'update']);
+
+    Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
+    Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
+
+    Route::post('/users/{user}/warn', [AdminUserController::class, 'warn']);
+
 
 
     Route::get('/posts', [AdminPostController::class, 'index']);

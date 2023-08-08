@@ -22,6 +22,8 @@ class UserResource extends JsonResource
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
             'profile_url' => $this->profile_url,
             'online' => $this->online,
+            'ban' => $this->bannedUser ? $this->bannedUser : false,
+            'warning' => $this->warning,
             'followers' => $this->followers,
             'followings' => $this->followings,
             'friends' => $this->friends,

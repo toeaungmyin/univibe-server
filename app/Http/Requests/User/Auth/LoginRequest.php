@@ -33,7 +33,7 @@ class LoginRequest extends FormRequest
             'password' => [
                 'required',
                 'min:8',
-                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
+                // 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
                 // requires at least one lowercase letter
                 // requires at least one uppercase letter
                 // requires at least one special character from the specified symbols

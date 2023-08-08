@@ -6,11 +6,14 @@ namespace App\Http\Controllers\api\v1\admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Http\Resources\admin\UserResource;
+use App\Models\BannedUser;
 use App\Models\User;
+use App\Models\WarningUser;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -21,31 +24,14 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::where('email_verified', true)->role('user')->paginate(10);
+        $users = User::role('user')->where('email_verified', true)->paginate(10);
         return response()->json(UserResource::collection($users));
     }
-    // public function update(UserUpdateRequest $request, User $user)
-    // {
 
-    //     $user->update($request->only([
-    //         'username',
-    //         'email',
-    //         'birthday',
-    //         'online'
-    //     ]));
-
-    //     if ($request->has('profile_url')) {
-    //         $photo = $request->file('profile_url');
-    //         $photoName = time() . '.' . $photo->getClientOriginalExtension();
-    //         $photo_path = 'uploads/profile';
-    //         $photo->storeAs($photo_path, $photoName);
-    //         $photo_url = $photo_path . '/' . $photoName;
-    //         $user->profile_url = $photo_url;
-    //         $user->save();
-    //     }
-
-    //     return response()->json(new UserResource($user));
-    // }
+    public function show(User $user)
+    {
+        return response()->json(new UserResource($user));
+    }
 
     public function update(UserUpdateRequest $request, User $user)
     {
@@ -64,6 +50,89 @@ class UserController extends Controller
     {
         $photoPath = $photo->store('uploads/profile', 'public');
         return Storage::disk('public')->url($photoPath);
+    }
+
+    public function ban(User $user, Request $request)
+    {
+        // Assuming you have an authenticated admin user who initiates the banning
+        $admin = Auth::user();
+
+        // Validate the reason title and description using Validator
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string',
+        ]);
+
+        // If validation fails, return a JSON response with error messages
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
+        }
+
+        // Ban the user using the BannedUser model method
+        BannedUser::create([
+            'user_id' => $user->id,
+            'admin_id' => $admin->id,
+            'title' => $request->title,
+            'description' => $request->description,
+        ]);
+
+        // Optionally you can perform additional actions like sending notifications, updating user status, etc.
+
+        // Return a JSON response with success message
+        return response()->json([
+            'user' => new UserResource($user),
+            'message' => 'User has been banned successfully'
+        ]);
+    }
+
+    public function unban(User $user)
+    {
+        $bannedUser = BannedUser::where('user_id', $user->id)->first();
+
+        if (!$bannedUser) {
+            return response()->json(['message' => 'User is not banned.'], 422); // Return a JSON response indicating the user is not banned.
+        }
+
+        $bannedUser->delete();
+
+
+        return response()->json([
+            'user' => new UserResource($user),
+            'message' => 'User has been unbanned successfully.'
+        ]);
+    }
+
+    public function warn(User $user, Request $request)
+    {
+        // Assuming you have an authenticated admin user who issues the warning
+        $admin = Auth::user();
+
+        // Validate the warning title and description using Validator
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string',
+        ]);
+
+        // If validation fails, return a JSON response with error messages
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
+        }
+
+        // Issue the warning using the WarningUser model method
+        WarningUser::create([
+            'user_id' => $user->id,
+            'admin_id' => $admin->id,
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+        ]);
+
+        // Optionally you can perform additional actions like sending notifications, updating user status, etc.
+
+        // Return a JSON response with success message
+        return response()->json([
+            'user' => new UserResource($user),
+            'message' => 'User has been warned successfully'
+        ]);
     }
 
 }

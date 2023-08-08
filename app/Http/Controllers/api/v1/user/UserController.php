@@ -8,6 +8,7 @@ use App\Http\Resources\user\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -23,18 +24,30 @@ class UserController extends Controller
         return response()->json(UserResource::collection($users));
     }
 
-    // public function update(User $user, UserUpdateRequest $request)
-    // {
+    public function show(User $user)
+    {
+        return response()->json(new UserResource($user));
+    }
 
-    //     // $user->update($request->filled([
-    //     //     'username',
-    //     //     'email',
-    //     //     'birthday',
-    //     //     'profile_url',
-    //     //     'online'
-    //     // ]));
-    //     return $request;
-    // }
+    public function update(UserUpdateRequest $request)
+    {
+        $authenticatedUser = Auth::user();
+        $data = $request->validated();
+
+        if ($request->hasFile('profile_url')) {
+            $data['profile_url'] = $this->uploadProfilePhoto($request->file('profile_url'));
+        }
+
+        $authenticatedUser->update($data);
+
+        return response()->json(new UserResource($authenticatedUser));
+    }
+
+    private function uploadProfilePhoto($photo)
+    {
+        $photoPath = $photo->store('uploads/profiles', 'public');
+        return Storage::disk('public')->url($photoPath);
+    }
 
 
 }

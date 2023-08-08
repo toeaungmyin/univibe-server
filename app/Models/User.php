@@ -125,12 +125,13 @@ class User extends Authenticatable
     // Friendship
     public function followers()
     {
-        return $this->hasMany(Following::class, 'following_id');
+        return $this->belongsToMany(User::class, 'followings', 'following_id', 'follower_id');
     }
 
+    // Relationship with followings
     public function followings()
     {
-        return $this->hasMany(Following::class, 'follower_id');
+        return $this->belongsToMany(User::class, 'followings', 'follower_id', 'following_id');
     }
 
     public function friends()
@@ -153,5 +154,16 @@ class User extends Authenticatable
     public function verification_codes()
     {
         return $this->hasMany(Verification_Code::class);
+    }
+
+    public function bannedUser()
+    {
+        return $this->hasOne(BannedUser::class, 'user_id');
+    }
+
+    // Relationship with WarningUser model
+    public function warning()
+    {
+        return $this->hasMany(WarningUser::class, 'user_id');
     }
 }

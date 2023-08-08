@@ -25,8 +25,10 @@ class PostRequest extends FormRequest
     public function rules()
     {
         return [
-            'body' => 'nullable|string|max:255',
-            'photo' => 'nullable|image|size:1MB'
+            'audience' => 'required|string|in:public,private,friends', // 'audience' should be one of these values.
+            'content' => 'nullable|string|max:1000', // Increase the max length to 1000 characters.
+            'image' => 'nullable|mimes:jpeg,png,jpg,gif|max:2048', // Allow only specific image formats and reduce the max size to 2MB (2048 KB).
         ];
+
     }
 }

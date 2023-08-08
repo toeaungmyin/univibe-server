@@ -28,6 +28,17 @@ class UserSeeder extends Seeder
                 'email_verified_at' => Carbon::now(),
         ])->assignRole('admin');
 
+        User::create([
+            'username' => 'Toe Aung Myin',
+            'email' => 'toeaungmyin@ucsm.edu.mm',
+            'birthday' => Carbon::parse('8-6-2003'),
+            'profile_url' => '',
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
+
         $faker = Faker::create();
 
         // Create 20 users with random attributes

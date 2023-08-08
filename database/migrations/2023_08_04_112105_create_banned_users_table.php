@@ -13,15 +13,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('banned_users', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->enum('audience', ['public', 'private', 'friends']);
-            $table->text('content')->nullable();
-            $table->string('image')->nullable();
+            $table->unsignedBigInteger('admin_id');
+            $table->string('title', 100); // Assuming you want to limit the title to 100 characters
+            $table->text('description');
             $table->timestamps();
 
+            // Define foreign key constraints
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('admin_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('banned_users');
     }
 };
