@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Resources\user;
+namespace App\Http\Resources\admin;
 
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class PostCollection extends ResourceCollection
@@ -20,17 +19,23 @@ class PostCollection extends ResourceCollection
         } else {
             $nextPage = null;
         }
+
+        if (1 < $this->currentPage()) {
+            $prevPage = $this->currentPage() - 1;
+        } else {
+            $prevPage = null;
+        }
         return [
-            'current_page' => $this->currentPage(),
             'data' => PostResource::collection($this->collection),
-            'first_page_url' => $this->url(1),
-            'from' => $this->firstItem(),
+            'current_page' => $this->currentPage(),
+            'first_page' => 1,
             'last_page' => $this->lastPage(),
             'next_page' => $nextPage,
-            'path' => $this->path(),
+            'prev_page' => $prevPage,
             'per_page' => $this->perPage(),
-            'prev_page_url' => $this->previousPageUrl(),
+            'path' => $this->path(),
             'to' => $this->lastItem(),
+            'from' => $this->firstItem(),
             'total' => $this->total(),
         ];
     }

@@ -142,12 +142,10 @@ class User extends Authenticatable
         });
     }
 
-
-
     // post
     public function posts()
     {
-        return $this->belongsToMany(Post::class);
+        return $this->hasMany(Post::class);
     }
 
     // verification code
@@ -166,4 +164,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(WarningUser::class, 'user_id');
     }
+
+    public function reactions()
+    {
+        return $this->hasMany(Reaction::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
 }

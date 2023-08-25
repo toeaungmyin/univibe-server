@@ -47,7 +47,7 @@ class UserSeeder extends Seeder
                 'username' => $faker->userName,
                 'email' => $faker->userName . '@ucsm.edu.mm',
                 'birthday' => $faker->date,
-                'profile_url' => $faker->optional()->url,
+                'profile_url' => $faker->imageUrl(),
                 'online' => $faker->boolean,
                 'email_verified' => true,
                 'email_verified_at' => now(),

@@ -11,10 +11,11 @@ use App\Http\Controllers\api\v1\user\auth\RegisterController;
 use App\Http\Controllers\api\v1\user\auth\LoginController;
 use App\Http\Controllers\api\v1\user\auth\LogoutController;
 use App\Http\Controllers\api\v1\user\auth\ForgetPasswordController;
+use App\Http\Controllers\api\v1\user\CommentController;
 use App\Http\Controllers\api\v1\user\FollowingController;
 use App\Http\Controllers\api\v1\user\PostController;
 use App\Http\Controllers\api\v1\user\UserController;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -52,13 +53,26 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/update', [UserController::class, 'update']);
 
-    Route::post('/users/{user}/followings/{following}', [FollowingController::class, 'store']);
+    Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
+    Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
+
+    Route::post('/users/{user}/follow', [FollowingController::class, 'store']);
+
 
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
     Route::put('/posts/{post}', [PostController::class, 'update']);
     Route::delete('/posts/{post}', [PostController::class, 'delete']);
+
+    Route::post('/posts/{post}/react', [PostController::class, 'reactToPost']);
+
+
+    Route::post('/comments', [CommentController::class, 'store']);
+    // Update a comment
+    Route::put('/comments/{comment}', [CommentController::class, 'update']);
+    // Delete a comment
+    Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
 
 });
 
@@ -78,5 +92,6 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
 
 
     Route::get('/posts', [AdminPostController::class, 'index']);
+    Route::get('/posts/{post}', [AdminPostController::class, 'show']);
     Route::delete('/posts/{post}', [AdminPostController::class, 'delete']);
 });

@@ -49,5 +49,38 @@ class UserController extends Controller
         return Storage::disk('public')->url($photoPath);
     }
 
+    public function reportUser(Request $request, User $user)
+    {
+    }
+
+    public function suggestedUser()
+    {
+        // Get the authenticated user
+        $user = Auth::user();
+
+        $followerIds = $user->followers->pluck('id')->toArray();
+        $followingIds = $user->followings->pluck('id')->toArray();
+
+        // Get 5 random users who are neither followers nor following the authenticated user
+        $randomUsers = User::role('user')->whereNotIn('id', array_merge($followerIds, $followingIds))
+            ->where('id', '!=', $user->id)
+            ->inRandomOrder()
+            ->take(5)
+            ->get();
+
+
+        if (!$randomUsers) {
+            return response()->json([
+                'status' => false,
+                'message' => 'No random user found to follow.'
+            ], 404);
+        }
+
+        return response()->json([
+            'status' => true,
+            'random_users' => $randomUsers
+        ], 200);
+    }
+
 
 }

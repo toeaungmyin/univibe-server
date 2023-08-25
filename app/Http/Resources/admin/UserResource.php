@@ -27,6 +27,7 @@ class UserResource extends JsonResource
             'followers' => $this->followers,
             'followings' => $this->followings,
             'friends' => $this->friends,
+            'posts' => $this->posts,
             'roles' => $this->getRolenames(),
             'permissions' => $this->getPermissionNames(),
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),

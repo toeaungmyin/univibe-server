@@ -7,8 +7,11 @@ use App\Http\Requests\User\PostRequest;
 use App\Http\Resources\user\PostCollection;
 use App\Http\Resources\user\PostResource;
 use App\Models\Post;
+use App\Models\Reaction;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 
 class PostController extends Controller
@@ -18,6 +21,14 @@ class PostController extends Controller
         $posts = Post::latest()->paginate(10);
         return response()->json(new PostCollection($posts));
     }
+
+    public function getUserPosts(User $user)
+    {
+        $posts = $user->posts()->latest()->paginate(10);
+        return response()->json(new PostCollection($posts));
+    }
+
+
     public function store(Request $postRequest)
     {
         if (!$postRequest->has('content') && !$postRequest->has('image')) {
@@ -91,5 +102,45 @@ class PostController extends Controller
         $post->delete();
 
         return response()->json(['message' => 'Post deleted successfully'], 200);
+    }
+
+    public function reactToPost(Request $request, Post $post)
+    {
+        // Get the authenticated user (assuming you're using authentication)
+        $user = Auth::user();
+
+        // Check if the user has already reacted to this post
+        $existingReaction = Reaction::where('user_id', $user->id)
+            ->where('post_id', $post->id)
+            ->first();
+
+        if ($existingReaction) {
+            // Delete the existing reaction (unreact)
+            $existingReaction->delete();
+            return response()->json(
+                [
+                    'post' => new PostResource($post),
+                    'message' => 'Reaction removed successfully'
+                ]
+            );
+        } else {
+            // Create a new reaction
+            $reaction = new Reaction([
+                'user_id' => $user->id,
+                'post_id' => $post->id,
+            ]);
+
+            $reaction->save();
+            return response()->json([
+                'post' => new PostResource($post),
+                'message' => 'Reaction added successfully'
+            ]);
+        }
+    }
+
+
+
+    public function report(Request $request, User $user)
+    {
     }
 }

@@ -3,45 +3,41 @@
 namespace App\Http\Controllers\api\v1\user;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Validator;
 use App\Models\User;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FollowingController extends Controller
 {
-
-
-    public function store(Request $request)
+    public function store(User $user)
     {
-        $validator = Validator::make($request->all(), [
-            'following_id' => 'required'
-        ]);
+        // Ensure the authenticated user is not trying to follow themselves
+        $follower = Auth::user();
 
-        if ($validator->fails()) {
+        if ($follower->id === $user->id) {
             return response()->json([
                 'status' => false,
-                'errors' => $validator->errors()
-            ], 422);
+                'message' => 'You cannot follow yourself.'
+            ], 400);
         }
 
-        $follower = $request->user();
-        $followingId = $request->input('following_id');
-        $followingUser = User::find($followingId);
-
-        if (!$followingUser) {
+        // Check if the user is already being followed to avoid duplication
+        if ($follower->followings()->where('following_id', $user->id)->exists()) {
             return response()->json([
                 'status' => false,
-                'message' => 'User with ID ' . $followingId . ' not found'
-            ], 404);
+                'message' => 'You are already following ' . $user->username
+            ], 400);
         }
 
-        $follower->followings()->attach($followingId);
+        // Create the relationship
+        $follower->followings()->attach($user);
 
         return response()->json([
             'status' => true,
-            'message' => 'You followed ' . $followingUser->username
+            'message' => 'You followed ' . $user->username
         ], 200);
     }
 
+
+    
 
 }

@@ -2,10 +2,9 @@
 
 namespace App\Http\Resources\user;
 
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class PostResource extends JsonResource
+class CommentResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -17,13 +16,11 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'description' => $this->comment,
             'user' => new UserResource($this->user),
-            'audience' => $this->audience,
-            'content' => $this->content,
-            'image' => $this->image,
-            'reactions' => $this->reactedUsers,
-            'comments' => CommentResource::collection($this->comments->sortBy('created_at')),
-            'created_at' => Carbon::parse($this->created_at)->diffForHumans(Carbon::now(), true) . ' ago',
+            'post_id' => $this->post_id,
+            'created_at' => $this->created_at->toDateTimeString(),
+            'updated_at' => $this->updated_at->toDateTimeString(),
         ];
     }
 }
