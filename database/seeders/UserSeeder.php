@@ -39,6 +39,39 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('user');
 
+        User::create([
+            'username' => 'Hsu Cherry Linn',
+            'email' => 'hsucherrylinn@ucsm.edu.mm',
+            'birthday' => Carbon::parse('20-10-2003'),
+            'profile_url' => '',
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
+
+        User::create([
+            'username' => 'Seng Moon Jar',
+            'email' => 'sengmoonjar@ucsm.edu.mm',
+            'birthday' => Carbon::parse('20-10-2003'),
+            'profile_url' => '',
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
+
+        User::create([
+            'username' => 'Nay CHi Hlaing',
+            'email' => 'naychihlaing@ucsm.edu.mm',
+            'birthday' => Carbon::parse('20-10-2003'),
+            'profile_url' => '',
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
+
         $faker = Faker::create();
 
         // Create 20 users with random attributes

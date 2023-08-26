@@ -4,6 +4,7 @@ namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class UserUpdateRequest extends FormRequest
 {
@@ -30,17 +31,19 @@ class UserUpdateRequest extends FormRequest
             ],
             'email' => [
                 'email',
-                'unique:users,email',
+                Rule::unique('users', 'email')->ignore($this->user()->id),
                 'ends_with:@ucsm.edu.mm'
             ],
             'password' => [
+                'nullable',
                 'min:8',
                 'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
                 // requires at least one lowercase letter
                 // requires at least one uppercase letter
                 // requires at least one special character from the specified symbols
                 // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
-            ]
+            ],
+            'profile' => 'nullable|mimes:jpeg,png,jpg,gif|max:1028',
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\user;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CommentResource extends JsonResource
@@ -19,8 +20,8 @@ class CommentResource extends JsonResource
             'description' => $this->comment,
             'user' => new UserResource($this->user),
             'post_id' => $this->post_id,
-            'created_at' => $this->created_at->toDateTimeString(),
-            'updated_at' => $this->updated_at->toDateTimeString(),
+            'created_at' => Carbon::parse($this->created_at)->diffForHumans(Carbon::now(), true),
+            'updated_at' => Carbon::parse($this->updated_at)->diffForHumans(Carbon::now(), true),
         ];
     }
 }

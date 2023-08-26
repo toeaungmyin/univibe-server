@@ -29,18 +29,28 @@ class UserController extends Controller
         return response()->json(new UserResource($user));
     }
 
-    public function update(UserUpdateRequest $request)
+    public function update(UserUpdateRequest $request, User $user)
     {
-        $authenticatedUser = Auth::user();
-        $data = $request->validated();
 
-        if ($request->hasFile('profile_url')) {
-            $data['profile_url'] = $this->uploadProfilePhoto($request->file('profile_url'));
+        // if ($request->hasFile('profile')) {
+        //     return response()->json(true);
+        // } else {
+        //     return response()->json(false);
+        // }
+
+        if ($user->id !== Auth::user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
         }
 
-        $authenticatedUser->update($data);
+        $data = $request->validated();
 
-        return response()->json(new UserResource($authenticatedUser));
+        if ($request->hasFile('profile')) {
+            $data['profile'] = $this->uploadProfilePhoto($request->file('profile'));
+        }
+
+        $user->update($data);
+
+        return response()->json(new UserResource($user));
     }
 
     private function uploadProfilePhoto($photo)

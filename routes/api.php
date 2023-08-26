@@ -51,14 +51,12 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/me', [UserController::class, 'profile']);
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
-    Route::put('/users/update', [UserController::class, 'update']);
+    Route::put('/users/{user}', [UserController::class, 'update']);
 
     Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
     Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
 
     Route::post('/users/{user}/follow', [FollowingController::class, 'store']);
-
-
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
