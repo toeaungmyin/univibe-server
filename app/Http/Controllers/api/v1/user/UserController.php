@@ -32,20 +32,14 @@ class UserController extends Controller
     public function update(UserUpdateRequest $request, User $user)
     {
 
-        // if ($request->hasFile('profile')) {
-        //     return response()->json(true);
-        // } else {
-        //     return response()->json(false);
-        // }
-
         if ($user->id !== Auth::user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
         $data = $request->validated();
 
-        if ($request->hasFile('profile')) {
-            $data['profile'] = $this->uploadProfilePhoto($request->file('profile'));
+        if ($request->hasFile('profile_url')) {
+            $data['profile_url'] = $this->uploadProfilePhoto($request->file('profile_url'));
         }
 
         $user->update($data);
@@ -57,6 +51,22 @@ class UserController extends Controller
     {
         $photoPath = $photo->store('uploads/profiles', 'public');
         return Storage::disk('public')->url($photoPath);
+    }
+
+    public function uploadImage(Request $request)
+    {
+        // Validate the incoming request data
+        $request->validate([
+            'profile' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust validation rules as needed
+        ]);
+
+        // Handle the image upload
+        if ($request->hasFile('profile')) {
+
+            return response()->json(['message' => 'Image uploaded successfully']);
+        }
+
+        return response()->json(['message' => 'Image upload failed'], 400);
     }
 
     public function reportUser(Request $request, User $user)

@@ -52,6 +52,7 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/{user}', [UserController::class, 'update']);
+    // Route::put('/uploadProfile', [UserController::class, 'uploadImage']);
 
     Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
     Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
@@ -71,7 +72,6 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     // Delete a comment
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
-
 });
 
 // admin routes

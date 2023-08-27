@@ -43,7 +43,7 @@ class UserUpdateRequest extends FormRequest
                 // requires at least one special character from the specified symbols
                 // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
             ],
-            'profile' => 'nullable|mimes:jpeg,png,jpg,gif|max:1028',
+            'profile_url' => 'nullable|mimes:jpeg,png,jpg,gif|max:2048',
         ];
     }
 }

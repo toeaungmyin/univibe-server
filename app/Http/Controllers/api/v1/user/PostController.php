@@ -28,7 +28,6 @@ class PostController extends Controller
         return response()->json(new PostCollection($posts));
     }
 
-
     public function store(Request $postRequest)
     {
         if (!$postRequest->has('content') && !$postRequest->has('image')) {
