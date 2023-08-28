@@ -102,5 +102,17 @@ class UserController extends Controller
         ], 200);
     }
 
+    public function search(Request $request)
+    {
+        $query = $request->input('query'); // Get the search query from the request
+
+        $users = User::where('username', 'like', '%' . $query . '%')
+            ->orWhere('email', 'like', '%' . $query . '%')
+            ->select('id', 'username', 'profile_url')
+            ->get();
+
+        return response()->json(['users' => $users]);
+    }
+
 
 }

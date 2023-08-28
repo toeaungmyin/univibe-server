@@ -2,12 +2,17 @@
 
 namespace App\Http\Controllers\api\v1\user;
 
+use App\Events\CommentNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\user\CommentResource;
-use App\Http\Resources\user\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
+use App\Models\User;
+
+use App\Notifications\NewComment;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 
 class CommentController extends Controller
 {
@@ -26,7 +31,22 @@ class CommentController extends Controller
             'comment' => $validatedData['comment'],
         ]);
 
-        // Optionally, you can return the newly created comment as a JSON response
+
+        $post = Post::find($validatedData['post_id']);
+
+        $postOwner = $post->user;
+
+        $commentUserIds = $post->comments->pluck('user_id')->unique()->except($postOwner->id)->toArray();
+
+        if (auth()->user()->id !== $postOwner->id) {
+            $postOwner->notify(new NewComment(auth()->user(), $post));
+        }
+
+        if (!empty($commentUserIds)) {
+            $users = User::whereIn('id', $commentUserIds)->get();
+            Notification::send($users, new NewComment(Auth::user(), $post));
+        }
+
         return response()->json([
             'message' => 'Comment created successfully', 'comment' => new CommentResource($comment)
         ]);

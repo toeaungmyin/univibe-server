@@ -13,6 +13,7 @@ use App\Http\Controllers\api\v1\user\auth\LogoutController;
 use App\Http\Controllers\api\v1\user\auth\ForgetPasswordController;
 use App\Http\Controllers\api\v1\user\CommentController;
 use App\Http\Controllers\api\v1\user\FollowingController;
+use App\Http\Controllers\api\v1\user\NotificationController;
 use App\Http\Controllers\api\v1\user\PostController;
 use App\Http\Controllers\api\v1\user\UserController;
 
@@ -52,12 +53,14 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/users', [UserController::class, 'index']);
     Route::get('/users/{user}', [UserController::class, 'show']);
     Route::put('/users/{user}', [UserController::class, 'update']);
-    // Route::put('/uploadProfile', [UserController::class, 'uploadImage']);
+    Route::get('/search-user', [UserController::class, 'search']);
+
 
     Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
     Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
 
     Route::post('/users/{user}/follow', [FollowingController::class, 'store']);
+    Route::post('/users/{user}/unfollow', [FollowingController::class, 'unfollow']);
 
     Route::get('/posts', [PostController::class, 'index']);
     Route::post('/posts', [PostController::class, 'store']);
@@ -72,6 +75,10 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::put('/comments/{comment}', [CommentController::class, 'update']);
     // Delete a comment
     Route::delete('/comments/{comment}', [CommentController::class, 'destroy']);
+
+
+    Route::get('/notifications', [NotificationController::class, 'index']);
+    Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
 });
 
 // admin routes
