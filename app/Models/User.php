@@ -98,8 +98,7 @@ class User extends Authenticatable
         try {
             $code = Random::generate(6, '0-9');
 
-            PasswordReset::create([
-                'email' => $this->email,
+            PasswordReset::create(['user_id' => $this->id,
                 'code' => $code,
             ]);
 
@@ -174,6 +173,19 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class);
     }
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class, 'sender_id');
+    }
+
+    public function conversations()
+    {
+        return $this->belongsToMany(Conversation::class);
+    }
+
+
+
 
     public function receivesBroadcastNotificationsOn()
     {

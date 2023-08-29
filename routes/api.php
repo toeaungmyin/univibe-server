@@ -13,6 +13,7 @@ use App\Http\Controllers\api\v1\user\auth\LogoutController;
 use App\Http\Controllers\api\v1\user\auth\ForgetPasswordController;
 use App\Http\Controllers\api\v1\user\CommentController;
 use App\Http\Controllers\api\v1\user\FollowingController;
+use App\Http\Controllers\api\v1\user\MessageController;
 use App\Http\Controllers\api\v1\user\NotificationController;
 use App\Http\Controllers\api\v1\user\PostController;
 use App\Http\Controllers\api\v1\user\UserController;
@@ -55,7 +56,6 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::get('/search-user', [UserController::class, 'search']);
 
-
     Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
     Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
 
@@ -79,6 +79,10 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
 
     Route::get('/notifications', [NotificationController::class, 'index']);
     Route::post('/notifications/{notificationId}/mark-as-read', [NotificationController::class, 'markAsRead']);
+
+    Route::get('/conversations', [MessageController::class, 'index']);
+    Route::get('/users/{user}/conversation', [MessageController::class, 'listMessages']);
+    Route::post('/messages', [MessageController::class, 'store']);
 });
 
 // admin routes

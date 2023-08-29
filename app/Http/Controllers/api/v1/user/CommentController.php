@@ -5,6 +5,7 @@ namespace App\Http\Controllers\api\v1\user;
 use App\Events\CommentNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\user\CommentResource;
+use App\Http\Resources\user\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -31,24 +32,26 @@ class CommentController extends Controller
             'comment' => $validatedData['comment'],
         ]);
 
-
         $post = Post::find($validatedData['post_id']);
-
         $postOwner = $post->user;
-
-        $commentUserIds = $post->comments->pluck('user_id')->unique()->except($postOwner->id)->toArray();
+        $commentUserIds = $post->comments->pluck('user_id')->unique()->toArray();
 
         if (auth()->user()->id !== $postOwner->id) {
             $postOwner->notify(new NewComment(auth()->user(), $post));
         }
+
+        // Remove the post owner's ID from the commentUserIds array
+        $commentUserIds = array_diff(
+            $commentUserIds,
+            [$postOwner->id]
+        );
 
         if (!empty($commentUserIds)) {
             $users = User::whereIn('id', $commentUserIds)->get();
             Notification::send($users, new NewComment(Auth::user(), $post));
         }
 
-        return response()->json([
-            'message' => 'Comment created successfully', 'comment' => new CommentResource($comment)
+        return response()->json(['message' => 'Comment created successfully', 'post' => new PostResource($post)
         ]);
     }
 
@@ -67,9 +70,9 @@ class CommentController extends Controller
 
         // Update the comment
         $comment->update(['comment' => $validatedData['comment']]);
-
+        $post = Post::find($comment->post->id);
         return response()->json([
-            'message' => 'Comment updated successfully', 'comment' => new CommentResource($comment)
+            'message' => 'Comment updated successfully', 'post' => new PostResource($post)
         ]);
     }
 
