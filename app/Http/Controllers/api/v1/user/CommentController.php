@@ -6,6 +6,7 @@ use App\Events\CommentNotification;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\user\CommentResource;
 use App\Http\Resources\user\PostResource;
+use App\Http\Resources\user\UserResource;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
@@ -37,7 +38,7 @@ class CommentController extends Controller
         $commentUserIds = $post->comments->pluck('user_id')->unique()->toArray();
 
         if (auth()->user()->id !== $postOwner->id) {
-            $postOwner->notify(new NewComment(auth()->user(), $post));
+            $postOwner->notify(new NewComment(new UserResource(auth()->user()), $post));
         }
 
         // Remove the post owner's ID from the commentUserIds array
