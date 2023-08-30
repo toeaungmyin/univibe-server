@@ -61,11 +61,7 @@ class NewComment extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'user' => [
-                'id' => $this->user->id,
-                'username' => $this->user->username,
-                'profile_url' => $this->user->profile_url,
-            ],
+            'user' => $this->user,
             'post' => [
                 'id' => $this->post,
             ],

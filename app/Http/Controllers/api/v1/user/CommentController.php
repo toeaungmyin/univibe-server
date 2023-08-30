@@ -44,12 +44,12 @@ class CommentController extends Controller
         // Remove the post owner's ID from the commentUserIds array
         $commentUserIds = array_diff(
             $commentUserIds,
-            [$postOwner->id]
+            [$postOwner->id, Auth::user()->id]
         );
 
         if (!empty($commentUserIds)) {
             $users = User::whereIn('id', $commentUserIds)->get();
-            Notification::send($users, new NewComment(Auth::user(), $post));
+            Notification::send($users, new NewComment(new UserResource(auth()->user()), $post));
         }
 
         return response()->json(['message' => 'Comment created successfully', 'post' => new PostResource($post)
