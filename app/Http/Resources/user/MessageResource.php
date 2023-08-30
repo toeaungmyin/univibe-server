@@ -18,7 +18,7 @@ class MessageResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'sender' => new User(User::find($this->sender_id)),
+            'sender' => new UserResource(User::find($this->sender_id)),
             'receiver_id' => $this->receiver_id,
             'content' => $this->content,
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(Carbon::now(), true) . ' ago',
