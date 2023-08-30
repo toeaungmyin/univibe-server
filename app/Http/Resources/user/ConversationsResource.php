@@ -18,8 +18,8 @@ class ConversationsResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'user1' => User::select('id', 'profile_url', 'username')->find($this->user1_id),
-            'user2' => User::select('id', 'profile_url', 'username')->find($this->user2_id),
+            'user1' => new UserResource(User::select('id', 'profile_url', 'username')->find($this->user1_id)),
+            'user2' => new UserResource(User::select('id', 'profile_url', 'username')->find($this->user2_id)),
             'latest_message' => $this->messages->isEmpty() ? null : $this->messages->last()->content,
             'latest_message_at' => $this->messages->isEmpty() ? null : Carbon::parse($this->messages->last()->created_at)->diffForHumans(Carbon::now(), true) . ' ago',
 
