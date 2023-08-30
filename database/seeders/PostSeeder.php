@@ -20,7 +20,7 @@ class PostSeeder extends Seeder
         $faker = Faker::create();
 
         // Get all user IDs assuming you have users
-        $userIds = User::pluck('id')->toArray();
+        $userIds = User::role('user')->pluck('id')->toArray();
 
         for ($i = 0; $i < 20; $i++) {
             $post = new Post([

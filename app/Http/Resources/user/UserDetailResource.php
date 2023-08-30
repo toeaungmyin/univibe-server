@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-class UserResource extends JsonResource
+class UserDetailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -28,7 +28,6 @@ class UserResource extends JsonResource
             return !$this->followers->pluck('id')->contains($following->id);
         });
 
-
         return [
             'id' => $this->id,
             'username' => $this->username,
@@ -36,6 +35,11 @@ class UserResource extends JsonResource
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
             'profile_url' => Storage::disk('public')->url($this->profile_url),
             'online' => $this->online,
+            'followers' => UserResource::collection($followers->all()),
+            'followings' => UserResource::collection($followers->all()),
+            'friends' => UserResource::collection($followers->all()),
+            'roles' => $this->getRolenames(),
+            'permissions' => $this->getPermissionNames(),
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),
             'updated_at' => Carbon::parse($this->updated_at)->format('Y-m-d'),
         ];

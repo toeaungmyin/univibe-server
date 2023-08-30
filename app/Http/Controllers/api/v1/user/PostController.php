@@ -62,7 +62,7 @@ class PostController extends Controller
     private function uploadImage($photo)
     {
         $photoPath = $photo->store('uploads/images', 'public');
-        return Storage::disk('public')->url($photoPath);
+        return $photoPath;
     }
 
     public function update(Post $post, Request $request)

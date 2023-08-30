@@ -63,10 +63,23 @@ class MessageController extends Controller
         }
 
         // Create a new conversation if one doesn't exist between sender and receiver
-        $conversation = Conversation::firstOrCreate([
-            'user1_id' => $request->input('sender_id'),
-            'user2_id' => $request->input('receiver_id'),
-        ]);
+        $senderId = $request->input('sender_id');
+        $receiverId = $request->input('receiver_id');
+
+        // Check if the conversation already exists for sender and receiver IDs
+        $conversation = Conversation::where(function ($query) use ($senderId, $receiverId) {
+            $query->where('user1_id', $senderId)->where('user2_id', $receiverId);
+        })->orWhere(function ($query) use ($senderId, $receiverId) {
+            $query->where('user1_id', $receiverId)->where('user2_id', $senderId);
+        })->first();
+
+        if (!$conversation) {
+            // If the conversation doesn't exist, create a new one
+            $conversation = Conversation::create([
+                'user1_id' => $senderId,
+                'user2_id' => $receiverId,
+            ]);
+        }
 
         // Create a new message and associate it with the conversation
         $message = new Message();

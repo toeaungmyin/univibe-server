@@ -4,6 +4,7 @@ namespace App\Http\Controllers\api\v1\user;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\UserUpdateRequest;
+use App\Http\Resources\user\UserDetailResource;
 use App\Http\Resources\user\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -15,7 +16,7 @@ class UserController extends Controller
 {
     public function profile()
     {
-        return response()->json(new UserResource(Auth::user()));
+        return response()->json(new UserDetailResource(Auth::user()));
     }
 
     public function index()
@@ -26,7 +27,7 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        return response()->json(new UserResource($user));
+        return response()->json(new UserDetailResource($user));
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -44,13 +45,13 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return response()->json(new UserResource($user));
+        return response()->json(new UserDetailResource($user));
     }
 
     private function uploadProfilePhoto($photo)
     {
         $photoPath = $photo->store('uploads/profiles', 'public');
-        return Storage::disk('public')->url($photoPath);
+        return $photoPath;
     }
 
     public function uploadImage(Request $request)
@@ -98,7 +99,7 @@ class UserController extends Controller
 
         return response()->json([
             'status' => true,
-            'random_users' => $randomUsers
+            'random_users' => UserResource::collection($randomUsers)
         ], 200);
     }
 
@@ -111,7 +112,7 @@ class UserController extends Controller
             ->select('id', 'username', 'profile_url')
             ->get();
 
-        return response()->json(['users' => $users]);
+        return response()->json(['users' => UserResource::collection($users)]);
     }
 
 

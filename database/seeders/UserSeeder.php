@@ -8,6 +8,7 @@ use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Storage;
 
 class UserSeeder extends Seeder
 {
@@ -32,7 +33,7 @@ class UserSeeder extends Seeder
             'username' => 'Toe Aung Myin',
             'email' => 'toeaungmyin@ucsm.edu.mm',
             'birthday' => Carbon::parse('8-6-2003'),
-            'profile_url' => '',
+            'profile_url' => 'uploads/profiles/sta.jpg',
             'online' => false,
             'email_verified' => true,
             'email_verified_at' => now(),
@@ -43,7 +44,7 @@ class UserSeeder extends Seeder
             'username' => 'Hsu Cherry Linn',
             'email' => 'hsucherrylinn@ucsm.edu.mm',
             'birthday' => Carbon::parse('20-10-2003'),
-            'profile_url' => '',
+            'profile_url' => "uploads/profiles/hsu.jpg",
             'online' => false,
             'email_verified' => true,
             'email_verified_at' => now(),
@@ -54,7 +55,7 @@ class UserSeeder extends Seeder
             'username' => 'Seng Moon Jar',
             'email' => 'sengmoonjar@ucsm.edu.mm',
             'birthday' => Carbon::parse('20-10-2003'),
-            'profile_url' => '',
+            'profile_url' => "uploads/profiles/seng.jpg",
             'online' => false,
             'email_verified' => true,
             'email_verified_at' => now(),
@@ -65,7 +66,7 @@ class UserSeeder extends Seeder
             'username' => 'Nay CHi Hlaing',
             'email' => 'naychihlaing@ucsm.edu.mm',
             'birthday' => Carbon::parse('20-10-2003'),
-            'profile_url' => '',
+            'profile_url' => "uploads/profiles/nay.jpg",
             'online' => false,
             'email_verified' => true,
             'email_verified_at' => now(),
@@ -76,11 +77,12 @@ class UserSeeder extends Seeder
 
         // Create 20 users with random attributes
         for ($i = 0; $i < 20; $i++) {
+            $image = $i + 1;
             User::create([
                 'username' => $faker->userName,
                 'email' => $faker->userName . '@ucsm.edu.mm',
                 'birthday' => $faker->date,
-                'profile_url' => $faker->imageUrl(),
+                'profile_url' => "uploads/profiles/" . $image . ".jpg",
                 'online' => $faker->boolean,
                 'email_verified' => true,
                 'email_verified_at' => now(),
