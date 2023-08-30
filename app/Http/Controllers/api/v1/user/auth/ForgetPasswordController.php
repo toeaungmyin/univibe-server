@@ -23,7 +23,7 @@ class ForgetPasswordController extends Controller
             $response = ["message" => ['Invalid email']];
             return response()->json($response, 422);
         } else {
-            $passwordReset = PasswordReset::where('user_id', $user->id)->first();
+            $passwordReset = PasswordReset::where('user_id', $user->id);
             if ($passwordReset) {
                 $passwordReset->delete();
             }

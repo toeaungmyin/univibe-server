@@ -28,7 +28,6 @@ class ForgetPasswordRequest extends FormRequest
                 'required',
                 'email',
                 'exists:users,email',
-                'ends_with:@ucsm.edu.mm'
             ],
         ];
     }

@@ -98,8 +98,6 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
 
     Route::post('/users/{user}/warn', [AdminUserController::class, 'warn']);
 
-
-
     Route::get('/posts', [AdminPostController::class, 'index']);
     Route::get('/posts/{post}', [AdminPostController::class, 'show']);
     Route::delete('/posts/{post}', [AdminPostController::class, 'delete']);

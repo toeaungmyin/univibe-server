@@ -16,17 +16,6 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $followers_collection = collect($this->followers);
-
-        $followers = $followers_collection->filter(function ($follower) {
-            return !$this->followings->pluck('id')->contains($follower->id);
-        });
-
-        $followings_collection = collect($this->followings);
-
-        $followings = $followings_collection->filter(function ($following) {
-            return !$this->followers->pluck('id')->contains($following->id);
-        });
 
 
         return [

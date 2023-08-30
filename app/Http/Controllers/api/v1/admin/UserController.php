@@ -5,6 +5,8 @@ namespace App\Http\Controllers\api\v1\admin;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserUpdateRequest;
+use App\Http\Resources\admin\UserCollection;
+use App\Http\Resources\admin\UserDetailResource;
 use App\Http\Resources\admin\UserResource;
 use App\Models\BannedUser;
 use App\Models\User;
@@ -19,18 +21,18 @@ class UserController extends Controller
 {
     public function profile()
     {
-        return response()->json(new UserResource(Auth::user()));
+        return response()->json(new UserDetailResource(Auth::user()));
     }
 
     public function index()
     {
         $users = User::role('user')->where('email_verified', true)->paginate(10);
-        return response()->json(UserResource::collection($users));
+        return response()->json(new UserCollection($users));
     }
 
     public function show(User $user)
     {
-        return response()->json(new UserResource($user));
+        return response()->json(new UserDetailResource($user));
     }
 
     public function update(UserUpdateRequest $request, User $user)
@@ -43,13 +45,13 @@ class UserController extends Controller
 
         $user->update($data);
 
-        return response()->json(new UserResource($user));
+        return response()->json(new UserDetailResource($user));
     }
 
     private function uploadProfilePhoto($photo)
     {
         $photoPath = $photo->store('uploads/profile', 'public');
-        return Storage::disk('public')->url($photoPath);
+        return $photoPath;
     }
 
     public function ban(User $user, Request $request)
@@ -79,8 +81,7 @@ class UserController extends Controller
         // Optionally you can perform additional actions like sending notifications, updating user status, etc.
 
         // Return a JSON response with success message
-        return response()->json([
-            'user' => new UserResource($user),
+        return response()->json(['user' => new UserDetailResource($user),
             'message' => 'User has been banned successfully'
         ]);
     }
@@ -96,8 +97,7 @@ class UserController extends Controller
         $bannedUser->delete();
 
 
-        return response()->json([
-            'user' => new UserResource($user),
+        return response()->json(['user' => new UserDetailResource($user),
             'message' => 'User has been unbanned successfully.'
         ]);
     }
@@ -130,7 +130,7 @@ class UserController extends Controller
 
         // Return a JSON response with success message
         return response()->json([
-            'user' => new UserResource($user),
+            'user' => new UserDetailResource($user),
             'message' => 'User has been warned successfully'
         ]);
     }

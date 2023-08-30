@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class ForgetPasswordController extends Controller
 {
@@ -22,7 +23,7 @@ class ForgetPasswordController extends Controller
             $response = ["message" => ['Invalid email']];
             return response()->json($response, 422);
         } else {
-            PasswordReset::where('email', $user->email)->first()->delete();
+            PasswordReset::where('user_id', $user->id)->delete();
             $response = $user->sendPasswordResetEmail();
         }
 
@@ -56,7 +57,7 @@ class ForgetPasswordController extends Controller
                 'code' => ''
             ]);
 
-            $user = User::where('email', $password_reset->email)->first();
+            $user = User::find($password_reset->user_id);
 
             if ($user) {
                 $token = $user->createToken($user->email . '_' . now())->accessToken;
@@ -83,15 +84,46 @@ class ForgetPasswordController extends Controller
 
     public function resetPassword(Request $request)
     {
-        $user = Auth::user();
-
-        $user->update([
-            'password' => Hash::make($request->password)
+        $validator = Validator::make($request->all(), [
+            'password' => [
+                'nullable',
+                'min:8',
+                'regex:/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/'
+                // requires at least one lowercase letter
+                // requires at least one uppercase letter
+                // requires at least one special character from the specified symbols
+                // matches a combination of letters, digits, and special characters with a minimum length of 8 characters.
+            ],
         ]);
 
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => $validator->errors()->all()
+            ], 422);
+        }
+
+        $validData = $validator->validated();
+
+        $user = User::find(Auth::user()->id);
+        $password_reset = PasswordReset::where('user_id', $user->id)->first();
+        if ($password_reset && $password_reset->code_verified) {
+
+            $user->update([
+                'password' => Hash::make($validData['password'])
+            ]);
+
+            $password_reset->delete();
+
+            return response()->json([
+                'status' => true,
+                'message' => ['Password reset successful']
+            ], 200);
+        }
+
         return response()->json([
-            'status' => true,
-            'message' => ['Password reset successful']
-        ], 200);
+            'status' => false,
+            'message' => ['Password reset is not allowed for this user']
+        ], 422);
     }
 }
