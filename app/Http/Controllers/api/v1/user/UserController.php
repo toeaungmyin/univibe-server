@@ -40,6 +40,9 @@ class UserController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('profile_url')) {
+            if ($user->profle_url) {
+                Storage::disk('public')->delete($user->profile_url);
+            }
             $data['profile_url'] = $this->uploadProfilePhoto($request->file('profile_url'));
         }
 
@@ -52,22 +55,6 @@ class UserController extends Controller
     {
         $photoPath = $photo->store('uploads/profiles', 'public');
         return $photoPath;
-    }
-
-    public function uploadImage(Request $request)
-    {
-        // Validate the incoming request data
-        $request->validate([
-            'profile' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048', // Adjust validation rules as needed
-        ]);
-
-        // Handle the image upload
-        if ($request->hasFile('profile')) {
-
-            return response()->json(['message' => 'Image uploaded successfully']);
-        }
-
-        return response()->json(['message' => 'Image upload failed'], 400);
     }
 
     public function reportUser(Request $request, User $user)

@@ -17,30 +17,35 @@ class FollowingSeeder extends Seeder
     public function run()
     {
         // Get all users
-        $users = User::all();
+        $users = User::role('user')->get();
 
         foreach ($users as $user) {
             // Randomly select a user to follow
-            $followingUser = $users->random();
+            $followings = User::role('user')->where('id', '!=', $user->id)->take(3)->get();
 
-            // Skip if the user is already following the selected user or if they are the same user
-            if ($user->id === $followingUser->id || $user->followings->contains('following_id', $followingUser->id)) {
-                continue;
+            foreach ($followings as $following) {
+                // Skip if the user is already following the selected user or if they are the same user
+                if ($user->id === $following->id || $user->followings->contains('following_id', $following->id)) {
+                    continue;
+                }
+
+                // Create a new following relationship
+                if (rand(0, 1)) {
+                    Following::create([
+                        'follower_id' => $user->id,
+                        'following_id' => $following->id,
+                    ]);
+                }
+
+                // Randomly establish friendship
+                if (rand(0, 1)) {
+                    Following::create([
+                        'follower_id' => $following->id,
+                        'following_id' => $user->id,
+                    ]);
+                }
             }
 
-            // Create a new following relationship
-            Following::create([
-                'follower_id' => $user->id,
-                'following_id' => $followingUser->id,
-            ]);
-
-            // Randomly establish friendship
-            if (rand(0, 1)) {
-                Following::create([
-                    'follower_id' => $followingUser->id,
-                    'following_id' => $user->id,
-                ]);
-            }
         }
     }
 }

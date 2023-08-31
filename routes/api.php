@@ -92,6 +92,7 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
     Route::get('/users', [AdminUserController::class, 'index']);
     Route::get('/users/{user}', [AdminUserController::class, 'show']);
     Route::put('/users/{user}', [AdminUserController::class, 'update']);
+    Route::delete('/users/{user}', [AdminUserController::class, 'delete']);
 
     Route::post('/users/{user}/ban', [AdminUserController::class, 'ban']);
     Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);

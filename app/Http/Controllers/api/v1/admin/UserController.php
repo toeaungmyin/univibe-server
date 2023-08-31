@@ -40,6 +40,9 @@ class UserController extends Controller
         $data = $request->validated();
 
         if ($request->hasFile('profile_url')) {
+            if ($user->profle_url) {
+                Storage::disk('public')->delete($user->profile_url);
+            }
             $data['profile_url'] = $this->uploadProfilePhoto($request->file('profile_url'));
         }
 
@@ -54,10 +57,23 @@ class UserController extends Controller
         return $photoPath;
     }
 
+    public function delete(User $user)
+    {
+        if (!$user) {
+            return response()->json(['message' => 'User does not exist'], 404);
+        }
+        if ($user->profle_url) {
+            Storage::disk('public')->delete($user->profile_url);
+        }
+        $user->tokens()->delete();
+        $user->delete();
+        return response()->json(['message' => 'Account deleted successfully']);
+    }
+
     public function ban(User $user, Request $request)
     {
         // Assuming you have an authenticated admin user who initiates the banning
-        $admin = Auth::user();
+        $admin = User::role('admin')->find(Auth::user()->id);
 
         // Validate the reason title and description using Validator
         $validator = Validator::make($request->all(), [
@@ -70,6 +86,10 @@ class UserController extends Controller
             return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
         }
 
+        $bannedUser = BannedUser::where('user_id', $user->id)->first();
+        if ($bannedUser) {
+            return response()->json(['message' => 'User is already banned.'], 422);
+        }
         // Ban the user using the BannedUser model method
         BannedUser::create([
             'user_id' => $user->id,

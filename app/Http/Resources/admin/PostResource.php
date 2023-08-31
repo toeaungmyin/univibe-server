@@ -4,6 +4,7 @@ namespace App\Http\Resources\admin;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class PostResource extends JsonResource
 {
@@ -20,7 +21,9 @@ class PostResource extends JsonResource
             'user' => new UserResource($this->user),
             'audience' => $this->audience,
             'content' => $this->content,
-            'image' => $this->image,
+            'image' => Storage::disk('public')->url($this->image),
+            'reactions' => $this->reactedUsers,
+            'comments' => CommentResource::collection($this->comments->sortBy('created_at')),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(Carbon::now(), true) . ' ago',
         ];
     }

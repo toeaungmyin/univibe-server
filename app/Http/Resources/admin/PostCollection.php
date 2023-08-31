@@ -15,20 +15,24 @@ class PostCollection extends ResourceCollection
     public function toArray($request)
     {
         if ($this->lastPage() > $this->currentPage()) {
-            $nextPage = $this->currentPage() + 1;
+            $next_page = $this->currentPage() + 1;
         } else {
-            $nextPage = null;
+            $next_page = null;
+        }
+        if (1 < $this->currentPage()) {
+            $perv_page = $this->currentPage() - 1;
+        } else {
+            $perv_page = null;
         }
         return [
-            'current_page' => $this->currentPage(),
             'data' => PostResource::collection($this->collection),
-            'first_page_url' => $this->url(1),
-            'from' => $this->firstItem(),
+            'first_page' => 1,
             'last_page' => $this->lastPage(),
-            'next_page' => $nextPage,
-            'path' => $this->path(),
+            'next_page' => $next_page,
+            'current_page' => $this->currentPage(),
+            'perv_page' => $perv_page,
             'per_page' => $this->perPage(),
-            'prev_page_url' => $this->previousPageUrl(),
+            'from' => $this->firstItem(),
             'to' => $this->lastItem(),
             'total' => $this->total(),
         ];
