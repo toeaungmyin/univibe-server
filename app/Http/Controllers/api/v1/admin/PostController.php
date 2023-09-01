@@ -23,12 +23,13 @@ class PostController extends Controller
 
     public function delete(Post $post)
     {
+        $user = $post->user;
         if (isset($post->photo)) {
             Storage::delete($post->photo_url);
         }
 
         $post->delete();
 
-        return response()->json(['message' => 'Post deleted successfully'], 200);
+        return response()->json(['message' => 'post deleted successfully'], 200);
     }
 }

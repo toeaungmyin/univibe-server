@@ -22,7 +22,7 @@ class PostSeeder extends Seeder
         // Get all user IDs assuming you have users
         $userIds = User::role('user')->pluck('id')->toArray();
 
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $post = new Post([
                 'user_id' => $faker->randomElement($userIds),
                 'content' => $faker->paragraph,
