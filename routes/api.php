@@ -56,8 +56,11 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::put('/users/{user}', [UserController::class, 'update']);
     Route::get('/search-user', [UserController::class, 'search']);
 
+    Route::post('/users/{user}/report', [UserController::class, 'report']);
+
     Route::get('/users/suggest/random', [UserController::class, 'suggestedUser']);
     Route::get('/users/{user}/posts', [PostController::class, 'getUserPosts']);
+
 
     Route::post('/users/{user}/follow', [FollowingController::class, 'store']);
     Route::post('/users/{user}/unfollow', [FollowingController::class, 'unfollow']);
@@ -68,6 +71,7 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::delete('/posts/{post}', [PostController::class, 'delete']);
 
     Route::post('/posts/{post}/react', [PostController::class, 'reactToPost']);
+    Route::post('/posts/{post}/report', [PostController::class, 'report']);
 
 
     Route::post('/comments', [CommentController::class, 'store']);

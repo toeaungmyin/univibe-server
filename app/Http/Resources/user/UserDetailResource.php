@@ -16,17 +16,18 @@ class UserDetailResource extends JsonResource
      */
     public function toArray($request)
     {
-        $followers_collection = collect($this->followers);
+        // Convert arrays to collections and filter by 'id'
+        $followers_collection = collect($this->followers)->unique('id');
+        $followings_collection = collect($this->followings)->unique('id');
 
-        $followers = $followers_collection->filter(function ($follower) {
-            return !$this->followings->pluck('id')->contains($follower->id);
-        });
+        // Filter followers who are not in followings (not following you)
+        $followers = $followers_collection->whereNotIn('id', $followings_collection->pluck('id'));
 
-        $followings_collection = collect($this->followings);
+        // Filter followings who are not in followers (you are not following them)
+        $followings = $followings_collection->whereNotIn('id', $followers_collection->pluck('id'));
 
-        $followings = $followings_collection->filter(function ($following) {
-            return !$this->followers->pluck('id')->contains($following->id);
-        });
+        // Find friends (mutual followings)
+        $friends = $followers_collection->whereIn('id', $followings_collection->pluck('id'));
 
         return [
             'id' => $this->id,
@@ -37,7 +38,7 @@ class UserDetailResource extends JsonResource
             'online' => $this->online,
             'followers' => UserResource::collection($followers->all()),
             'followings' => UserResource::collection($followings->all()),
-            'friends' => UserResource::collection($this->friends),
+            'friends' => UserResource::collection($friends),
             'roles' => $this->getRolenames(),
             'permissions' => $this->getPermissionNames(),
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),

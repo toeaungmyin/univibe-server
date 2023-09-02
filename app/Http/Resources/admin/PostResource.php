@@ -21,7 +21,7 @@ class PostResource extends JsonResource
             'user' => new UserResource($this->user),
             'audience' => $this->audience,
             'content' => $this->content,
-            'image' => Storage::disk('public')->url($this->image),
+            'image' => $this->image ? Storage::disk('public')->url($this->image) : null,
             'reactions' => $this->reactedUsers,
             'comments' => CommentResource::collection($this->comments->sortBy('created_at')),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(Carbon::now(), true) . ' ago',

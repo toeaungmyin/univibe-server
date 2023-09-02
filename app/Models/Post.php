@@ -33,4 +33,9 @@ class Post extends Model
         return $this->hasMany(Comment::class);
     }
 
+    public function post_report()
+    {
+        return $this->hasMany(Post_Report::class);
+    }
+
 }

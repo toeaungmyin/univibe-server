@@ -2,11 +2,14 @@
 
 namespace Database\Seeders;
 
+use App\Models\Comment;
 use App\Models\Post;
+use App\Models\Reaction;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Faker\Factory as Faker;
+use Illuminate\Support\Facades\Storage;
 
 class PostSeeder extends Seeder
 {
@@ -21,16 +24,35 @@ class PostSeeder extends Seeder
 
         // Get all user IDs assuming you have users
         $userIds = User::role('user')->pluck('id')->toArray();
-
-        for ($i = 0; $i < 50; $i++) {
+        $disk = 'public';
+        $imageDirectory = 'uploads/images';
+        for ($i = 0; $i < 20; $i++) {
+            $audienceOptions = ['public', 'private', 'friends'];
+            $randomAudienceIndex = array_rand($audienceOptions);
+            $imageFiles = Storage::disk($disk)->files($imageDirectory);
+            $randomImage = $faker->randomElement($imageFiles);
             $post = new Post([
                 'user_id' => $faker->randomElement($userIds),
-                'content' => $faker->paragraph,
-                'image' => $faker->imageUrl(), // Assuming you want to add image URLs
-                'audience' => 'public',
+                'content' => $faker->paragraph,'image' => $randomImage,
+                'audience' => $audienceOptions[$randomAudienceIndex], // Use the selected value
             ]);
 
             $post->save();
+            for ($j = 0; $j < random_int(1, 5); $j++) {
+                Comment::create([
+                    'user_id' => $faker->randomElement($userIds), // Assuming you have user authentication
+                    'post_id' => $post->id,
+                    'comment' => $faker->sentence,
+                ]);
+            }
+
+            for ($k = 0; $k < random_int(5, 20); $k++) {
+                Reaction::create([
+                    'user_id' => $faker->randomElement($userIds),
+                    'post_id' => $post->id,
+                ]);
+            }
+
         }
     }
 }

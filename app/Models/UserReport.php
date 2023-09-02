@@ -10,13 +10,19 @@ class UserReport extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
+        'compliant_id',
+        'resistant_id',
         'title',
-        'description'
+        'description',
     ];
 
-    public function user()
+    function compliant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'post_reports', 'resistant_id', 'compliant_id');
+    }
+
+    function resistant()
+    {
+        return $this->belongsTo(User::class, 'post_reports', 'compliant_id', 'resistant_id');
     }
 }

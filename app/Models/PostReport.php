@@ -8,15 +8,26 @@ use Illuminate\Database\Eloquent\Model;
 class PostReport extends Model
 {
     use HasFactory;
-
     protected $fillable = [
-        'post_id',
+        'compliant_id',
+        'resistant_id',
         'title',
-        'description'
+        'description',
+        'post_id'
     ];
 
-    public function post()
+    function post()
     {
         return $this->belongsTo(Post::class);
+    }
+
+    function compliant()
+    {
+        return $this->belongsTo(User::class, 'post_reports', 'resistant_id', 'compliant_id');
+    }
+
+    function resistant()
+    {
+        return $this->belongsTo(User::class, 'post_reports', 'compliant_id', 'resistant_id');
     }
 }

@@ -3,22 +3,40 @@
 namespace App\Http\Controllers\api\v1\user;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\User\PostRequest;
 use App\Http\Resources\user\PostCollection;
 use App\Http\Resources\user\PostResource;
 use App\Models\Post;
+use App\Models\PostReport;
 use App\Models\Reaction;
 use App\Models\User;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
     public function index()
     {
-        $posts = Post::latest()->paginate(10);
+        $user = User::find(Auth::user()->id);
+        // Convert arrays to collections and filter by 'id'
+        $followers_collection = collect($user->followers)->unique('id');
+        $followings_collection = collect($user->followings)->unique('id');
+
+        // Filter followings who are not in followers (you are not following them)
+        $followings = $followings_collection->whereNotIn('id', $followers_collection->pluck('id'));
+
+        // Find friends (mutual followings)
+        $friends = $followers_collection->whereIn('id', $followings_collection->pluck('id'));
+
+        $posts = Post::where(function ($query) use ($friends, $followings) {
+            $query->whereIn('user_id', $friends->pluck('id'))
+            ->orWhereIn('user_id', $followings->pluck('id'))->orWhere('user_id', Auth::user()->id);
+        })
+            ->where('audience', 'public')
+            ->latest()
+            ->paginate(10);
+
         return response()->json(new PostCollection($posts));
     }
 
@@ -67,29 +85,37 @@ class PostController extends Controller
 
     public function update(Post $post, Request $request)
     {
-        if ($request->has('body')) {
-            $post->body = $request->body;
+        if ($request->has('audience')) {
+            $post->audience = $request->audience;
             $post->save();
         }
 
-        if ($request->has('photo')) {
-
-            if (isset($post->photo)) {
-                Storage::delete($post->photo_url);
-            }
-
-            $photo = $request->file('photo');
-            $photoName = Carbon::now() . '_' . $photo->getClientOriginalName() . $photo->getClientOriginalExtension();
-            $photo_path = 'uploads/photo';
-            $photo->storeAs($photo_path, $photoName);
-            $photo_url = $photo_path . '/' . $photoName;
-            $post->photo = $photo_url;
+        if ($request->has('content')) {
+            $post->content = $request->content;
             $post->save();
+        }
+
+        if ($request->input('isImageRemove') !== 'true') {
+            if ($request->has('image')) {
+
+                if ($post->image) {
+                    Storage::delete($post->image);
+                }
+
+                $post->image = $this->uploadImage($request->file('image'));
+                $post->save();
+            }
+        } else {
+            if ($post->image) {
+                Storage::delete($post->image);
+                $post->image = null;
+                $post->save();
+            }
         }
 
         return response()->json([
             'message' => 'Post updated successfully',
-            'post' => $post
+            'post' => new PostResource($post),
         ], 200);
     }
     public function delele(Post $post)
@@ -139,7 +165,34 @@ class PostController extends Controller
 
 
 
-    public function report(Request $request, User $user)
+    public function report(Request $request, Post $post)
     {
+        // Assuming you have an authenticated admin user who issues the warning
+        $user = User::find(Auth::user()->id);
+
+        // Validate the warning title and description using Validator
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string',
+        ]);
+
+        // If validation fails, return a JSON response with error messages
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
+        }
+
+        // Issue the warning using the WarningUser model method
+        PostReport::create([
+            'compliant_id' => $user->id,
+            'resistant_id' => $post->user->id,
+            'post_id' => $post->id,
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+        ]);
+
+        // Return a JSON response with success message
+        return response()->json([
+            'message' => 'Report has been sent successfully'
+        ]);
     }
 }

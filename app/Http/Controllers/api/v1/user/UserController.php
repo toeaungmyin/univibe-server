@@ -7,9 +7,11 @@ use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\user\UserDetailResource;
 use App\Http\Resources\user\UserResource;
 use App\Models\User;
+use App\Models\UserReport;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
@@ -64,7 +66,7 @@ class UserController extends Controller
     public function suggestedUser()
     {
         // Get the authenticated user
-        $user = Auth::user();
+        $user = User::find(Auth::user()->id);
 
         $followerIds = $user->followers->pluck('id')->toArray();
         $followingIds = $user->followings->pluck('id')->toArray();
@@ -100,6 +102,36 @@ class UserController extends Controller
             ->get();
 
         return response()->json(['users' => UserResource::collection($users)]);
+    }
+
+    public function report(Request $request, User $user)
+    {
+        // Assuming you have an authenticated admin user who issues the warning
+        $auth = User::find(Auth::user()->id);
+
+        // Validate the warning title and description using Validator
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:100',
+            'description' => 'required|string',
+        ]);
+
+        // If validation fails, return a JSON response with error messages
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422); // 422 Unprocessable Entity
+        }
+
+        // Issue the warning using the WarningUser model method
+        UserReport::create([
+            'compliant_id' => $auth->id,
+            'resistant_id' => $user->id,
+            'title' => $request->input('title'),
+            'description' => $request->input('description'),
+        ]);
+
+        // Return a JSON response with success message
+        return response()->json([
+            'message' => 'Report has been sent successfully'
+        ]);
     }
 
 
