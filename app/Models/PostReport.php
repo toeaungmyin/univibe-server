@@ -21,13 +21,14 @@ class PostReport extends Model
         return $this->belongsTo(Post::class);
     }
 
-    function compliant()
+    public function compliant()
     {
-        return $this->belongsTo(User::class, 'post_reports', 'resistant_id', 'compliant_id');
+        return $this->belongsTo(User::class, 'compliant_id');
     }
 
-    function resistant()
+    // In your UserReport model
+    public function resistant()
     {
-        return $this->belongsTo(User::class, 'post_reports', 'compliant_id', 'resistant_id');
+        return $this->belongsTo(User::class, 'resistant_id');
     }
 }

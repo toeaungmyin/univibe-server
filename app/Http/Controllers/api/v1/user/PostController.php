@@ -85,15 +85,9 @@ class PostController extends Controller
 
     public function update(Post $post, Request $request)
     {
-        if ($request->has('audience')) {
-            $post->audience = $request->audience;
-            $post->save();
-        }
 
-        if ($request->has('content')) {
-            $post->content = $request->content;
-            $post->save();
-        }
+
+
 
         if ($request->input('isImageRemove') !== 'true') {
             if ($request->has('image')) {
@@ -112,6 +106,10 @@ class PostController extends Controller
                 $post->save();
             }
         }
+
+        $post->audience = $request->audience;
+        $post->content = $request->content;
+        $post->save();
 
         return response()->json([
             'message' => 'Post updated successfully',

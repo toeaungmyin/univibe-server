@@ -10,7 +10,7 @@ class LogoutController extends Controller
 {
     public function logout()
     {
-        User::find(Auth::user())->tokens()->delete();
+        Auth::user()->tokens()->delete();
 
         return response()->json([
             'status' => true,

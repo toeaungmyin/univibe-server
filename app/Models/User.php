@@ -147,6 +147,16 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function user_report()
+    {
+        return $this->hasMany(UserReport::class);
+    }
+
+    public function post_report()
+    {
+        return $this->hasMany(PostReport::class);
+    }
+
     // verification code
     public function verification_codes()
     {

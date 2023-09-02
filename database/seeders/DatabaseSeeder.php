@@ -25,7 +25,8 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             UserSeeder::class,
             FollowingSeeder::class,
-            PostSeeder::class
+            PostSeeder::class,
+            ReportSeeder::class
         ]);
     }
 }

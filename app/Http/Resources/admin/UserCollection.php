@@ -20,9 +20,9 @@ class UserCollection extends ResourceCollection
             $next_page = null;
         }
         if (1 < $this->currentPage()) {
-            $perv_page = $this->currentPage() - 1;
+            $prev_page = $this->currentPage() - 1;
         } else {
-            $perv_page = null;
+            $prev_page = null;
         }
         return [
             'data' => UserResource::collection($this->collection),
@@ -30,7 +30,7 @@ class UserCollection extends ResourceCollection
             'last_page' => $this->lastPage(),
             'next_page' => $next_page,
             'current_page' => $this->currentPage(),
-            'perv_page' => $perv_page,
+            'prev_page' => $prev_page,
             'per_page' => $this->perPage(),
             'from' => $this->firstItem(),
             'to' => $this->lastItem(),

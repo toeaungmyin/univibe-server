@@ -32,4 +32,5 @@ class PostController extends Controller
 
         return response()->json(['message' => 'post deleted successfully'], 200);
     }
+
 }

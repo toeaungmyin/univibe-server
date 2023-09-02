@@ -3,8 +3,9 @@
 use App\Http\Controllers\api\v1\admin\auth\LoginController as AdminLoginController;
 use App\Http\Controllers\api\v1\admin\auth\LogoutController as AdminLogoutController;
 use App\Http\Controllers\api\v1\admin\auth\ForgetPasswordController as AdminForgetPasswordController;
-
+use App\Http\Controllers\api\v1\admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\api\v1\admin\PostController as AdminPostController;
+use App\Http\Controllers\api\v1\admin\ReportController as AdminReportController;
 use App\Http\Controllers\api\v1\admin\UserController as AdminUserController;
 
 use App\Http\Controllers\api\v1\user\auth\RegisterController;
@@ -91,6 +92,9 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
 
 // admin routes
 Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(function () {
+    Route::get('/', [AdminDashboardController::class, 'index']);
+    Route::get('/users-by-date', [AdminDashboardController::class, 'getUsersByDate']);
+
     Route::get('/me', [AdminUserController::class, 'profile']);
 
     Route::get('/users', [AdminUserController::class, 'index']);
@@ -106,4 +110,10 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
     Route::get('/posts', [AdminPostController::class, 'index']);
     Route::get('/posts/{post}', [AdminPostController::class, 'show']);
     Route::delete('/posts/{post}', [AdminPostController::class, 'delete']);
+
+    Route::get('/users-reports', [AdminReportController::class, 'getUsersReports']);
+    Route::delete('/users-reports/{report}', [AdminReportController::class, 'deleteReports']);
+
+    Route::get('/posts-reports', [AdminReportController::class, 'getPostsReports']);
+    Route::delete('/posts-reports/{report}', [AdminReportController::class, 'deletePostReports']);
 });

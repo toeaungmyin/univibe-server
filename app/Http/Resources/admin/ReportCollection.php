@@ -4,7 +4,7 @@ namespace App\Http\Resources\admin;
 
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class PostCollection extends ResourceCollection
+class ReportCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -20,17 +20,17 @@ class PostCollection extends ResourceCollection
             $next_page = null;
         }
         if (1 < $this->currentPage()) {
-            $perv_page = $this->currentPage() - 1;
+            $prev_page = $this->currentPage() - 1;
         } else {
-            $perv_page = null;
+            $prev_page = null;
         }
         return [
-            'data' => PostResource::collection($this->collection),
+            'data' => ReportResource::collection($this->collection),
             'first_page' => 1,
             'last_page' => $this->lastPage(),
             'next_page' => $next_page,
             'current_page' => $this->currentPage(),
-            'prev_page' => $perv_page,
+            'prev_page' => $prev_page,
             'per_page' => $this->perPage(),
             'from' => $this->firstItem(),
             'to' => $this->lastItem(),

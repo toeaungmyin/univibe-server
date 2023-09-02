@@ -26,7 +26,7 @@ class PostSeeder extends Seeder
         $userIds = User::role('user')->pluck('id')->toArray();
         $disk = 'public';
         $imageDirectory = 'uploads/images';
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 50; $i++) {
             $audienceOptions = ['public', 'private', 'friends'];
             $randomAudienceIndex = array_rand($audienceOptions);
             $imageFiles = Storage::disk($disk)->files($imageDirectory);
