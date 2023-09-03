@@ -4,6 +4,7 @@ namespace App\Http\Resources\admin;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 class UserResource extends JsonResource
@@ -23,7 +24,7 @@ class UserResource extends JsonResource
             'email' => $this->email,
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
             'profile_url' => Storage::disk('public')->url($this->profile_url),
-            'online' => $this->online,
+            'online' => Cache::has('online-' . $this->id),
             'created_at' => Carbon::parse($this->created_at)->format('Y-m-d'),
             'updated_at' => Carbon::parse($this->updated_at)->format('Y-m-d'),
         ];

@@ -21,12 +21,14 @@ class PostSeeder extends Seeder
     public function run()
     {
         $faker = Faker::create();
-
+        $currentYear = date('Y');
+        $startDate = $currentYear . '-08-01'; // Start of the year
+        $endDate = date('Y-m-d');
         // Get all user IDs assuming you have users
         $userIds = User::role('user')->pluck('id')->toArray();
         $disk = 'public';
         $imageDirectory = 'uploads/images';
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 100; $i++) {
             $audienceOptions = ['public', 'private', 'friends'];
             $randomAudienceIndex = array_rand($audienceOptions);
             $imageFiles = Storage::disk($disk)->files($imageDirectory);
@@ -35,6 +37,7 @@ class PostSeeder extends Seeder
                 'user_id' => $faker->randomElement($userIds),
                 'content' => $faker->paragraph,'image' => $randomImage,
                 'audience' => $audienceOptions[$randomAudienceIndex], // Use the selected value
+                'created_at' => $faker->dateTimeBetween($startDate, $endDate),
             ]);
 
             $post->save();

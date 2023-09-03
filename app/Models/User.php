@@ -33,6 +33,7 @@ class User extends Authenticatable
         'online',
         'email_verified',
         'email_verified_at',
+        'last_activity_at'
     ];
 
     /**
@@ -44,6 +45,7 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'email_verification_code',
+        'created_at'
     ];
 
     /**

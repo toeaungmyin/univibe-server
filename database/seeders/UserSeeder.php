@@ -25,6 +25,7 @@ class UserSeeder extends Seeder
                 'email' => 'team.univibe@gmail.com',
                 'password' => Hash::make('admin'),
                 'birthday' => Carbon::now()->startOfMonth(),
+            'profile_url' => 'uploads/profiles/logo.png',
                 'email_verified' => 1,
                 'email_verified_at' => Carbon::now(),
         ])->assignRole('admin');
@@ -73,8 +74,21 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('user');
 
-        $faker = Faker::create();
+        User::create([
+            'username' => 'Mg Bo Thi',
+            'email' => 'thihazaw2@ucsm.edu.mm',
+            'birthday' => Carbon::parse('20-10-2003'),
+            'profile_url' => "uploads/profiles/3.jpg",
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
 
+        $faker = Faker::create();
+        $currentYear = date('Y');
+        $startDate = $currentYear . '-08-01'; // Start of the year
+        $endDate = date('Y-m-d');
         // Create 20 users with random attributes
         for ($i = 0; $i < 20; $i++) {
             $image = $i + 1;
@@ -83,10 +97,11 @@ class UserSeeder extends Seeder
                 'email' => $faker->userName . '@ucsm.edu.mm',
                 'birthday' => $faker->date,
                 'profile_url' => "uploads/profiles/" . $image . ".jpg",
-                'online' => $faker->boolean,
+                'online' => false,
                 'email_verified' => true,
                 'email_verified_at' => now(),
                 'password' => Hash::make('password'),
+                'created_at' => $faker->dateTimeBetween($startDate, $endDate),
             ])->assignRole('user');
         }
     }

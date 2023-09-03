@@ -2,48 +2,41 @@
 
 namespace App\Events;
 
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PresenceChannel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
+use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Str;
 
-class CommentNotification
+class CommentNotification implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
+    // public $id;
+    public $message;
 
-
-    protected $user;
-    protected $post;
-    protected $message;
-    /**
-     * Create a new event instance.
-     *
-     * @return void
-     */
-    public function __construct($user, $post)
+    public function __construct($message)
     {
-        $this->user = $user;
-        $this->post = $post;
-        $this->message = ['user' => $user, 'post' => $post, 'message' => $user . ' comment on your post'];
+        // $this->id = Str::uuid();
+        $this->message = $message;
     }
 
-    /**
-     * Get the channels the event should broadcast on.
-     *
-     * @return \Illuminate\Broadcasting\Channel|array
-     */
+    public function broadcastWith()
+    {
+        return ["message" => $this->message];
+    }
+
     public function broadcastOn()
     {
-        return new PrivateChannel('App.Model.User.' . $this->user->id);
+        return ['my-channel'];
     }
 
     public function broadcastAs()
     {
-        return 'comment-on-post';
+        return 'my-event';
     }
 }

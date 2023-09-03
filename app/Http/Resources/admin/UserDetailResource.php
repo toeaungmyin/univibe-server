@@ -4,6 +4,7 @@ namespace App\Http\Resources\admin;
 
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 
 use function PHPUnit\Framework\isEmpty;
@@ -37,7 +38,7 @@ class UserDetailResource extends JsonResource
             'email' => $this->email,
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
             'profile_url' => Storage::disk('public')->url($this->profile_url),
-            'online' => $this->online,
+            'online' => Cache::has('online-' . $this->id),
             'followers' => UserResource::collection($followers),
             'followings' => UserResource::collection($followings),
             'friends' => UserResource::collection($friends),

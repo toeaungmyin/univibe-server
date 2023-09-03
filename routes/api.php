@@ -94,6 +94,7 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
 Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(function () {
     Route::get('/', [AdminDashboardController::class, 'index']);
     Route::get('/users-by-date', [AdminDashboardController::class, 'getUsersByDate']);
+    Route::get('/posts-by-date', [AdminDashboardController::class, 'getPostsByDate']);
 
     Route::get('/me', [AdminUserController::class, 'profile']);
 

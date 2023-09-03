@@ -33,7 +33,7 @@ class PostController extends Controller
             $query->whereIn('user_id', $friends->pluck('id'))
             ->orWhereIn('user_id', $followings->pluck('id'))->orWhere('user_id', Auth::user()->id);
         })
-            ->where('audience', 'public')
+            ->whereIn('audience', ['public', 'friends'])
             ->latest()
             ->paginate(10);
 

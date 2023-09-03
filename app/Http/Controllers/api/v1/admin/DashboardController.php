@@ -64,4 +64,40 @@ class DashboardController extends Controller
 
         return $userData;
     }
+
+    public function getPostsByDate(Request $request)
+    {
+        // $this->validate($request, [
+        //     'start_date' => 'required|date',
+        //     'end_date' => 'required|date|after_or_equal:start_date',
+        // ]);
+
+        // $start_date = $request->input('start_date');
+        // $end_date = $request->input('end_date');
+
+
+        $posts = Post::all();
+        // $users = User::whereBetween('created_at', [$start_date, $end_date])->get();
+
+        $postData = $this->formatPostData($posts);
+
+        return response()->json(['postData' => $postData]);
+    }
+
+    private function formatPostData($posts)
+    {
+        // Example: Count the number of posts per day
+        $postData = [];
+
+        foreach ($posts as $post) {
+            $date = Carbon::parse($post->created_at)->format('Y-m-d');
+            if (!isset($postData[$date])) {
+                $postData[$date] = 1;
+            } else {
+                $postData[$date]++;
+            }
+        }
+
+        return $postData;
+    }
 }
