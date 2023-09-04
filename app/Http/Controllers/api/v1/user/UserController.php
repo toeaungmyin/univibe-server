@@ -59,10 +59,6 @@ class UserController extends Controller
         return $photoPath;
     }
 
-    public function reportUser(Request $request, User $user)
-    {
-    }
-
     public function suggestedUser()
     {
         // Get the authenticated user

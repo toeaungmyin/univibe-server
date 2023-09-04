@@ -20,7 +20,7 @@ class LastActivityMiddleware
     public function handle(Request $request, Closure $next)
     {
         if (Auth::check()) {
-            $expiresAt = now()->addMinutes(3);
+            $expiresAt = now()->addSeconds(30);
             Cache::put('online-' . Auth::user()->id, true, $expiresAt);
         }
         return $next($request);

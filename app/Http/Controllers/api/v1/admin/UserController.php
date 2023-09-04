@@ -7,11 +7,9 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UserUpdateRequest;
 use App\Http\Resources\admin\UserCollection;
 use App\Http\Resources\admin\UserDetailResource;
-use App\Http\Resources\admin\UserResource;
 use App\Models\BannedUser;
 use App\Models\User;
 use App\Models\WarningUser;
-use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -153,6 +151,17 @@ class UserController extends Controller
             'user' => new UserDetailResource($user),
             'message' => 'User has been warned successfully'
         ]);
+    }
+
+    public function search(Request $request)
+    {
+        $query = $request->input('query'); // Get the search query from the request
+
+        $users = User::where('username', 'like', '%' . $query . '%')
+            ->orWhere('email', 'like', '%' . $query . '%')
+            ->paginate(20);
+
+        return response()->json(new UserCollection($users));
     }
 
 }
