@@ -35,7 +35,7 @@ class UserDetailResource extends JsonResource
             'username' => $this->username,
             'email' => $this->email,
             'birthday' => Carbon::parse($this->birthday)->format('Y-m-d'),
-            'profile_url' => Storage::disk('public')->url($this->profile_url),
+            'profile_url' => $this->profile_url ? Storage::disk('public')->url($this->profile_url) : '',
             'online' => Cache::has('online-' . $this->id),
             'followers' => UserResource::collection($followers->all()),
             'followings' => UserResource::collection($followings->all()),

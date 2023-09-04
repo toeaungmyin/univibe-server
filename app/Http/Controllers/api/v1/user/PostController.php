@@ -116,10 +116,10 @@ class PostController extends Controller
             'post' => new PostResource($post),
         ], 200);
     }
-    public function delele(Post $post)
+    public function delete(Post $post)
     {
-        if (isset($post->photo)) {
-            Storage::delete($post->photo_url);
+        if (isset($post->image)) {
+            Storage::delete($post->image);
         }
 
         $post->delete();

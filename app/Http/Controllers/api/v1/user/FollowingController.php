@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\api\v1\user;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\admin\UserDetailResource;
 use App\Http\Resources\admin\UserResource;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
@@ -34,7 +35,7 @@ class FollowingController extends Controller
 
         return response()->json([
             'status' => true,
-            'auth' => new UserResource($follower),
+            'auth' => new UserDetailResource($follower),
             'message' => 'You followed ' . $user->username
         ], 200);
     }
@@ -62,7 +63,7 @@ class FollowingController extends Controller
 
         return response()->json([
             'status' => true,
-            'auth' => new UserResource($follower),
+            'auth' => new UserDetailResource($follower),
             'message' => 'You unfollowed ' . $user->username
         ], 200);
     }

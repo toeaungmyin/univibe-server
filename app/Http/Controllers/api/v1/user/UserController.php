@@ -130,5 +130,24 @@ class UserController extends Controller
         ]);
     }
 
+    public function delete(User $user)
+    {
+        if ($user->id !== Auth::user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+        if (!$user) {
+            return response()->json(['message' => 'User does not exist'], 404);
+        }
+        if ($user->profle_url) {
+            Storage::disk('public')->delete($user->profile_url);
+        }
+        if ($user->post) {
+            $user->posts()->delete();
+        }
+        $user->tokens()->delete();
+        $user->delete();
+        return response()->json(['message' => 'Account deleted successfully']);
+    }
+
 
 }

@@ -26,10 +26,10 @@ class RegisterController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => [
+
                 'user_id' => $user->id,
-                'code_expire_time' => $this->CODE_EXPIRE_TIME
-            ],
+            'code_expire_time' => $this->CODE_EXPIRE_TIME,
+
             'message' => 'Vertify email was sent'
         ]);
     }
@@ -48,29 +48,38 @@ class RegisterController extends Controller
 
         return response()->json([
             'status' => true,
-            'data' => [
-                'code_expire_time' => $this->CODE_EXPIRE_TIME
-            ],
+
+            'code_expire_time' => $this->CODE_EXPIRE_TIME,
+
             'message' => 'Vertify email was sent'
         ]);
     }
 
     public function verifyEmail(Request $request)
     {
-        if ($request->code === null || $request->code === '') {
+        if (!$request->code) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid login attempt'
-            ], 401);
+            ], 422);
         }
-        $code = Verification_Code::where('code', $request->code)->first();
-        $user = User::find($code->user_id);
 
-        if ($user == null) {
+        $code = Verification_Code::where('code', $request->code)->first();
+
+        if (!$code) {
             return response()->json([
                 'status' => false,
                 'message' => 'Invalid Login attempt'
-            ], 401);
+            ], 422);
+        }
+
+        $user = User::find($code->user_id);
+
+        if (!$user) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Invalid Login attempt'
+            ], 422);
         }
 
         $creationTime = Carbon::parse($code->created_at);
