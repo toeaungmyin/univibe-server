@@ -153,6 +153,31 @@ class UserController extends Controller
         ]);
     }
 
+    public function deleteWarning(User $user, $warningId)
+    {
+        // Find the warning by its ID and ensure it belongs to the specified user
+        $warning = WarningUser::where('id', $warningId)
+            ->where('user_id', $user->id)
+            ->first();
+
+        // Check if the warning exists
+        if (!$warning) {
+            return response()->json(['message' => 'Warning not found'], 404);
+        }
+
+        // Delete the warning
+        $warning->delete();
+
+        // Optionally, you can perform additional actions like updating user status, logging the deletion, etc.
+
+        // Return a JSON response with a success message
+        return response()->json([
+            'user' => new UserDetailResource($user),
+            'message' => 'Warning has been deleted successfully'
+        ]);
+    }
+
+
     public function search(Request $request)
     {
         $query = $request->input('query'); // Get the search query from the request

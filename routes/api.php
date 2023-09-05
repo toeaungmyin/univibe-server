@@ -108,6 +108,7 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
     Route::post('/users/{user}/unban', [AdminUserController::class, 'unban']);
 
     Route::post('/users/{user}/warn', [AdminUserController::class, 'warn']);
+    Route::delete('/users/{user}/warnings/{warningId}', [AdminUserController::class, 'deleteWarning']);
 
     Route::get('/search-user', [AdminUserController::class, 'search']);
 
