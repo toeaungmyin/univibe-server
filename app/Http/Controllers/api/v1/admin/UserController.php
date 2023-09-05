@@ -24,7 +24,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = User::role('user')->where('email_verified', true)->paginate(10);
+        $users = User::role('user')->paginate(10);
         return response()->json(new UserCollection($users));
     }
 
