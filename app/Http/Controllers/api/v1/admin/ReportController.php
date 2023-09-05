@@ -40,18 +40,17 @@ class ReportController extends Controller
         }
     }
 
-    public function deletePostReport(PostReport $postReport)
+    public function deletePostReport(PostReport $report)
     {
         try {
 
-            if (!$postReport) {
+            if (!$report) {
                 return response()->json(['message' => 'Report does not exist'], 404);
             }
 
-            $postReport->delete();
+            $report->delete();
 
             return response()->json([
-                'report' => $postReport,
                 'message' => 'Report deleted successfully'
             ]);
         } catch (\Throwable $th) {

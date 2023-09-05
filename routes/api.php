@@ -129,5 +129,4 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
     Route::delete('/users-reports/{report}', [AdminReportController::class, 'deleteUserReport']);
     Route::delete('/posts-reports/{report}', [AdminReportController::class, 'deletePostReport']);
 
-
 });

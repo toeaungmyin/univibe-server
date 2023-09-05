@@ -42,19 +42,11 @@ class PostController extends Controller
 
     public function getUserPosts(User $user)
     {
-        $user = User::find(Auth::user()->id);
-        // Convert arrays to collections and filter by 'id'
-        $followers_collection = collect($user->followers)->unique('id');
-        $followings_collection = collect($user->followings)->unique('id');
-
-        // Filter followings who are not in followers (you are not following them)
-        $followings = $followings_collection->whereNotIn('id', $followers_collection->pluck('id'));
-
-        // Find friends (mutual followings)
-        $friends = $followers_collection->whereIn('id', $followings_collection->pluck('id'));
-
-
-        $posts = $user->posts()->whereIn('audience', ['public', 'friends'])->latest()->paginate(10);
+        if ($user->id === Auth::user()->id) {
+            $posts = $user->posts()->latest()->paginate(10);
+        } else {
+            $posts = $user->posts()->whereIn('audience', ['public', 'friends'])->latest()->paginate(10);
+        }
         return response()->json(new PostCollection($posts));
     }
 
