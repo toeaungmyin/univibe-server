@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\admin\UserDetailResource;
 use App\Http\Resources\admin\UserResource;
 use App\Models\User;
+use App\Notifications\NewFollower;
 use Illuminate\Support\Facades\Auth;
 
 class FollowingController extends Controller
@@ -32,6 +33,7 @@ class FollowingController extends Controller
 
         // Create the relationship
         $follower->followings()->attach($user);
+        $user->notify(new NewFollower(new UserResource($follower)));
 
         return response()->json([
             'status' => true,

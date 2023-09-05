@@ -80,6 +80,7 @@ class CommentController extends Controller
     // Delete a comment
     public function destroy(Comment $comment)
     {
+        $post = Post::find($comment->post->id);
         // Check if the user has permission to delete the comment (e.g., the comment belongs to the user)
         if ($comment->user_id !== auth()->user()->id) {
             return response()->json(['message' => 'Unauthorized'], 403);
@@ -88,8 +89,7 @@ class CommentController extends Controller
         // Delete the comment
         $comment->delete();
 
-        return response()->json([
-            'message' => 'Comment deleted successfully'
+        return response()->json(['message' => 'Comment deleted successfully', 'post' => new PostResource($post)
         ]);
     }
 }

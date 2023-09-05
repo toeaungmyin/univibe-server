@@ -89,6 +89,8 @@ Route::middleware(['auth:api'])->prefix('/v1')->group(function () {
     Route::get('/conversations', [MessageController::class, 'index']);
     Route::get('/users/{user}/conversation', [MessageController::class, 'listMessages']);
     Route::post('/messages', [MessageController::class, 'store']);
+    Route::delete('/messages/{message}', [MessageController::class, 'destroy']);
+
 });
 
 // admin routes

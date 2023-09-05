@@ -2,29 +2,23 @@
 
 namespace App\Notifications;
 
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewComment extends Notification implements ShouldQueue
+class NewFollower extends Notification implements ShouldQueue
 {
     use Queueable;
-
     protected $user;
-    protected $post;
     /**
      * Create a new notification instance.
      *
      * @return void
      */
-    public function __construct($user, $post)
+    public function __construct($user)
     {
         $this->user = $user;
-        $this->post = $post;
     }
 
     /**
@@ -61,19 +55,9 @@ class NewComment extends Notification implements ShouldQueue
     public function toArray($notifiable)
     {
         return [
-            'type' => 'new-comment',
+            'type' => 'new-follower',
             'user' => $this->user,
-            'post' =>  $this->post,
-            'message' => $this->user->username . ' comment on your post'
+            'message' => 'You have new follower ' . $this->user->username
         ];
-    }
-
-    public function toBroadcast($notifiable)
-    {
-        return new BroadcastMessage($this->toArray($notifiable));
-    }
-    public function broadcastType()
-    {
-        return 'new-comment';
     }
 }

@@ -4,8 +4,10 @@ namespace App\Http\Controllers\api\v1\user\auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\User\Auth\RegisterRequest;
+use App\Http\Resources\user\UserResource;
 use App\Models\User;
 use App\Models\Verification_Code;
+use App\Notifications\NewAccount;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -93,13 +95,14 @@ class RegisterController extends Controller
             $user->assignRole('user');
             $code->delete();
             $token = $user->createToken($user->email . '_' . now())->accessToken;
-
+            $user->notify(new NewAccount(new UserResource(User::role('admin')->where('username', 'Team Univibe')->first())));
             return response()->json([
                 'status' => true,
                 'token' =>  $token,
                 'message' => 'Your email is verified successfully'
             ], 200);
         }
+
 
         return response()->json([
             'status' => false,

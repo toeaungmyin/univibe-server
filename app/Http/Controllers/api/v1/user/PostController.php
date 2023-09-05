@@ -5,10 +5,12 @@ namespace App\Http\Controllers\api\v1\user;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\user\PostCollection;
 use App\Http\Resources\user\PostResource;
+use App\Http\Resources\user\UserResource;
 use App\Models\Post;
 use App\Models\PostReport;
 use App\Models\Reaction;
 use App\Models\User;
+use App\Notifications\NewReact;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -155,6 +157,8 @@ class PostController extends Controller
             ]);
 
             $reaction->save();
+            $post->user->notify(new NewReact(new UserResource(auth()->user()), $post));
+
             return response()->json([
                 'post' => new PostResource($post),
                 'message' => 'Reaction added successfully'

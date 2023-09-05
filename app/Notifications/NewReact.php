@@ -2,15 +2,12 @@
 
 namespace App\Notifications;
 
-use App\Models\Post;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\BroadcastMessage;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class NewComment extends Notification implements ShouldQueue
+class NewReact extends Notification
 {
     use Queueable;
 
@@ -64,16 +61,7 @@ class NewComment extends Notification implements ShouldQueue
             'type' => 'new-comment',
             'user' => $this->user,
             'post' =>  $this->post,
-            'message' => $this->user->username . ' comment on your post'
+            'message' => $this->user->username . ' react on your post'
         ];
-    }
-
-    public function toBroadcast($notifiable)
-    {
-        return new BroadcastMessage($this->toArray($notifiable));
-    }
-    public function broadcastType()
-    {
-        return 'new-comment';
     }
 }

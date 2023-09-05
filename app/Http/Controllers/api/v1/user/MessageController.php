@@ -94,4 +94,19 @@ class MessageController extends Controller
             'message' => new MessageResource($message)
         ], 200);
     }
+
+    public function destroy(Message $message)
+    {
+        // Check if the user has permission to delete the comment (e.g., the comment belongs to the user)
+        if ($message->sender_id !== auth()->user()->id) {
+            return response()->json(['message' => 'Unauthorized'], 422);
+        }
+
+        // Delete the comment
+        $message->delete();
+
+        return response()->json([
+            'message' => 'Message deleted successfully'
+        ]);
+    }
 }
