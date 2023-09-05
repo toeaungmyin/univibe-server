@@ -120,11 +120,14 @@ Route::middleware(['auth:api', 'role:admin'])->prefix('/v1/admin')->group(functi
 
 
     Route::get('/users-reports', [AdminReportController::class, 'getUsersReports']);
-    Route::delete('/users-reports/{report}', [AdminReportController::class, 'deleteReports']);
     Route::get('/search-user-report', [AdminReportController::class, 'searchUserReport']);
 
     Route::get('/posts-reports', [AdminReportController::class, 'getPostsReports']);
-    Route::delete('/posts-reports/{report}', [AdminReportController::class, 'deletePostReports']);
+
     Route::get('/search-post-report', [AdminReportController::class, 'searchPostReport']);
+
+    Route::delete('/users-reports/{report}', [AdminReportController::class, 'deleteUserReport']);
+    Route::delete('/posts-reports/{report}', [AdminReportController::class, 'deletePostReport']);
+
 
 });

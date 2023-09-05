@@ -18,45 +18,48 @@ class ReportController extends Controller
         return response()->json(new ReportCollection($reports));
     }
 
-    public function deletePostReport(Request $request, $id)
-    {
-        try {
-            $userReport = PostReport::find($id); // Retrieve the report by its ID
-
-            if (!$userReport) {
-                return response()->json(['message' => 'Report does not exist'], 404);
-            }
-
-            $userReport->delete();
-            return response()->json(['message' => 'Report deleted successfully']);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()]);
-        }
-    }
-
-
     public function getPostsReports()
     {
         $reports = PostReport::latest()->paginate(20);
         return response()->json(new PostReportCollection($reports));
     }
 
-    public function deletePostReports(PostReport $postReport)
+    public function deleteUserReport(UserReport $report)
     {
         try {
-            // Check if $postReport is null
+
+            if (!$report) {
+                return response()->json(['message' => 'Report does not exist'], 404);
+            }
+
+            $report->delete();
+
+            return response()->json(['message' => 'Report dd deleted successfully']);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->getMessage()], 500); // Use a more appropriate status code for server errors (e.g., 500)
+        }
+    }
+
+    public function deletePostReport(PostReport $postReport)
+    {
+        try {
+
             if (!$postReport) {
                 return response()->json(['message' => 'Report does not exist'], 404);
             }
 
-            // If $postReport is not null, it exists, so delete it
             $postReport->delete();
 
-            return response()->json(['message' => 'Report deleted successfully']);
+            return response()->json([
+                'report' => $postReport,
+                'message' => 'Report deleted successfully'
+            ]);
         } catch (\Throwable $th) {
-            return response()->json(['message' => $th->getMessage()]);
+            return response()->json(['message' => $th->getMessage()], 500); // Use a more appropriate status code for server errors (e.g., 500)
         }
     }
+
+
 
     public function searchUserReport(Request $request)
     {

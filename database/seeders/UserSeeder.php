@@ -85,6 +85,17 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
         ])->assignRole('user');
 
+        User::create([
+            'username' => 'Nay Ye Linn',
+            'email' => 'nayyelinn@ucsm.edu.mm',
+            'birthday' => Carbon::parse('20-10-2003'),
+            'profile_url' => "uploads/profiles/3.jpg",
+            'online' => false,
+            'email_verified' => true,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+        ])->assignRole('user');
+
         $faker = Faker::create();
         $currentYear = date('Y');
         $startDate = $currentYear . '-08-01'; // Start of the year
