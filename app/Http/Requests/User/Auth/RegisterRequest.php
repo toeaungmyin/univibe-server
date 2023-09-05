@@ -45,4 +45,11 @@ class RegisterRequest extends FormRequest
             ]
         ];
     }
+
+    public function messages()
+    {
+        return [
+            'password.regex' => 'The password must contain at least one lowercase letter, one uppercase letter, one special character (@$!%*#?&), and be at least 8 characters long.',
+        ];
+    }
 }
