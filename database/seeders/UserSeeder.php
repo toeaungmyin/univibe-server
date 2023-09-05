@@ -32,7 +32,7 @@ class UserSeeder extends Seeder
 
         User::create([
             'username' => 'Toe Aung Myin',
-            'email' => 'toeaungmyin@ucsm.edu.mm',
+            'email' => 'toeaungmyin.02@ucsm.edu.mm',
             'birthday' => Carbon::parse('8-6-2003'),
             'profile_url' => 'uploads/profiles/sta.jpg',
             'online' => false,

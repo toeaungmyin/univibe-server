@@ -58,7 +58,7 @@ class NewReact extends Notification
     public function toArray($notifiable)
     {
         return [
-            'type' => 'new-comment',
+            'type' => 'new-react',
             'user' => $this->user,
             'post' =>  $this->post,
             'message' => $this->user->username . ' react on your post'
